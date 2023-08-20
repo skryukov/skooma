@@ -1,0 +1,158 @@
+[
+  {
+    "description": "Response query params validation",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {
+        "title": "api",
+        "version": "1.0.0"
+      },
+      "paths": {
+        "/": {
+          "get": {
+            "parameters": [
+              {
+                "in": "query",
+                "name": "foo",
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 3
+                }
+              },
+              {
+                "in": "query",
+                "name": "bar",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "string",
+                      "minLength": 3
+                    }
+                  }
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Success",
+                "content": {
+                  "application/json": {
+                    "schema": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "request with valid query attributes",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "foo=foo&bar=bar",
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": null
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "request without required query attribute",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "bar=bar",
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": null
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "request without optional query attribute",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "foo=foo",
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": null
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "request with invalid query attribute",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "foo=f&bar=bar",
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": null
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "request with invalid query attribute",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "foo=foo&bar=b",
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": null
+          }
+        },
+        "valid": false
+      }
+    ]
+  }
+]

@@ -1,0 +1,141 @@
+[
+  {
+    "description": "Response headers validation",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {
+        "title": "api",
+        "version": "1.0.0"
+      },
+      "paths": {
+        "/": {
+          "get": {
+            "responses": {
+              "200": {
+                "description": "Success",
+                "headers": {
+                  "X-Expires-At": {
+                    "required": true,
+                    "schema": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  },
+                  "X-Rate-Limit": {
+                    "description": "calls per hour allowed by the user",
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "Server": {
+                    "schema": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "content": {
+                  "application/json": {
+                    "schema": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "request with valid response headers",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json",
+              "X-Expires-At": "2020-01-01T00:00:00Z",
+              "X-Rate-Limit": "100",
+              "SERVER": "nginx"
+            },
+            "body": "{\"foo\": \"foo\", \"bar\": 1}"
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "request without optional response headers",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json",
+              "X-Expires-At": "2020-01-01T00:00:00Z"
+            },
+            "body": "{\"foo\": \"foo\", \"bar\": 1}"
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "request with invalid response headers",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json",
+              "X-Expires-At": "Christmas",
+              "Server": "nginx"
+            },
+            "body": "{\"foo\": \"foo\", \"bar\": 1}"
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "request with missing required response headers",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json",
+              "Server": "nginx"
+            },
+            "body": "{\"foo\": \"foo\", \"bar\": 1}"
+          }
+        },
+        "valid": false
+      }
+    ]
+  }
+]

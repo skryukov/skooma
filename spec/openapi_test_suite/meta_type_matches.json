@@ -1,0 +1,168 @@
+[
+  {
+    "description": "Meta type matches",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {
+        "title": "api",
+        "version": "1.0.0"
+      },
+      "paths": {
+        "/": {
+          "post": {
+            "requestBody": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "foo": {
+                        "type": "string"
+                      },
+                      "bar": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "responses": {
+              "200": {
+                "description": "Success",
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    }
+                  },
+                  "application/*": {
+                    "schema": {
+                      "type": "string"
+                    }
+                  },
+                  "*/*": {
+                    "schema": {}
+                  },
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "foo": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "unknown request body media type",
+        "data": {
+          "method": "post",
+          "path": "/",
+          "request": {
+            "headers": {
+              "Content-Type": "multipart/form-data"
+            },
+            "body": "foo=bar"
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "text/html"
+            },
+            "body": "<html></html>"
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "known request body media type",
+        "data": {
+          "method": "post",
+          "path": "/",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"foo\": \"bar\"}"
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "partial match",
+        "data": {
+          "method": "post",
+          "path": "/",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/octet-stream"
+            },
+            "body": ""
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "partial match with invalid body",
+        "data": {
+          "method": "post",
+          "path": "/",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/octet-stream"
+            },
+            "body": 42
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "fallback match",
+        "data": {
+          "method": "post",
+          "path": "/",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "image/png"
+            },
+            "body": 42
+          }
+        },
+        "valid": true
+      }
+    ]
+  }
+]

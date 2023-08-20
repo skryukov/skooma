@@ -1,0 +1,299 @@
+[
+  {
+    "description": "Simple routing",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {
+        "title": "api",
+        "version": "1.0.0"
+      },
+      "paths": {
+        "/simple": {
+          "get": {
+            "responses": {
+              "200": {
+                "description": "Success",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "foo": {
+                          "type": "string"
+                        },
+                        "bar": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "post": {
+            "requestBody": {
+              "required": true,
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "foo": {
+                        "type": "string"
+                      },
+                      "bar": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "responses": {
+              "200": {
+                "description": "Success",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "foo": {
+                          "type": "string"
+                        },
+                        "bar": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "422": {
+                "description": "Unprocessable Entity",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "/simple_with_ref": {
+          "get": {
+            "responses": {
+              "200": {
+                "description": "OK",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/Foo"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "post": {
+            "requestBody": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Foo"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "components": {
+        "schemas": {
+          "Foo": {
+            "type": "object",
+            "properties": {
+              "foo": {
+                "type": "string"
+              },
+              "bar": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "request with valid response body",
+        "data": {
+          "method": "get",
+          "path": "/simple",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"foo\": \"foo\", \"bar\": 1}"
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "request with invalid response body",
+        "data": {
+          "method": "get",
+          "path": "/simple",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"foo\": \"foo\", \"bar\": \"bar\"}"
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "schema that uses $ref for response and request with valid response body",
+        "data": {
+          "method": "get",
+          "path": "/simple_with_ref",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"foo\": \"foo\", \"bar\": 2}"
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "schema that uses $ref for response and request with invalid response body",
+        "data": {
+          "method": "get",
+          "path": "/simple_with_ref",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"foo\": \"foo\", \"bar\": \"bar\"}"
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "post request with valid request body",
+        "data": {
+          "method": "post",
+          "path": "/simple",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"foo\": \"foo\", \"bar\": 2}"
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"foo\": \"foo\", \"bar\": 2}"
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "post request with invalid request body",
+        "data": {
+          "method": "post",
+          "path": "/simple",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"foo\": \"foo\", \"bar\": \"bar\"}"
+          },
+          "response": {
+            "status": 422,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"message\": \"validation error\"}"
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "post request without required request body",
+        "data": {
+          "method": "post",
+          "path": "/simple",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 422,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"message\": \"validation error\"}"
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "post request without optional request body",
+        "data": {
+          "method": "post",
+          "path": "/simple_with_ref",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 422,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"message\": \"validation error\"}"
+          }
+        },
+        "valid": true
+      }
+    ]
+  }
+]

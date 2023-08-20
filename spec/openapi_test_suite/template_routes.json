@@ -1,0 +1,241 @@
+[
+  {
+    "description": "Template routes",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {
+        "title": "api",
+        "version": "1.0.0"
+      },
+      "paths": {
+        "/users/{id}": {
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "const": "skip"
+              }
+            }
+          ],
+          "get": {
+            "parameters": [
+              {
+                "name": "id",
+                "in": "path",
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "pattern": "^[0-9]+$"
+                }
+              }
+            ],
+            "responses": {
+              "201": {
+                "$ref": "#/components/responses/Foo"
+              }
+            }
+          }
+        },
+        "/users/me": {
+          "get": {
+            "responses": {
+              "200": {
+                "$ref": "#/components/responses/Foo"
+              }
+            }
+          }
+        },
+        "/users/{id}/{item}/{itemId}": {
+          "get": {
+            "parameters": [
+              {
+                "name": "id",
+                "in": "path",
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "pattern": "^[0-9]+$"
+                }
+              },
+              {
+                "name": "item",
+                "in": "path",
+                "required": true,
+                "schema": {
+                  "type": "string"
+                }
+              },
+              {
+                "name": "itemId",
+                "in": "path",
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "pattern": "^[0-9]+$"
+                }
+              }
+            ],
+            "responses": {
+              "203": {
+                "$ref": "#/components/responses/Foo"
+              }
+            }
+          }
+        },
+        "/users/{id}/comments/{commentId}": {
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "pattern": "^[0-9]+$"
+              }
+            },
+            {
+              "name": "commentId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "pattern": "^[0-9]+$"
+              }
+            }
+          ],
+          "get": {
+            "responses": {
+              "202": {
+                "$ref": "#/components/responses/Foo"
+              }
+            }
+          }
+        }
+      },
+      "components": {
+        "responses": {
+          "Foo": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "foo": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "simple route",
+        "data": {
+          "method": "get",
+          "path": "/users/me",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"foo\": \"bar\"}"
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "template route",
+        "data": {
+          "method": "get",
+          "path": "/users/42",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 201,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"foo\": \"bar\"}"
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "invalid parameter path",
+        "data": {
+          "method": "get",
+          "path": "/users/err",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 201,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"foo\": \"bar\"}"
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "template route with multiple params",
+        "data": {
+          "method": "get",
+          "path": "/users/42/comments/255",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 202,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"foo\": \"bar\"}"
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "template route with even more template params",
+        "data": {
+          "method": "get",
+          "path": "/users/42/components/36",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 203,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"foo\": \"bar\"}"
+          }
+        },
+        "valid": true
+      }
+    ]
+  }
+]

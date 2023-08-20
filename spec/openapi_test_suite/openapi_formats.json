@@ -1,0 +1,109 @@
+[
+  {
+    "description": "OpenAPI 3.1.0 formats",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {
+        "title": "api",
+        "version": "1.0.0"
+      },
+      "paths": {
+        "/": {
+          "get": {
+            "responses": {
+              "200": {
+                "description": "Success",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "int32": {
+                          "format": "int32"
+                        },
+                        "int64": {
+                          "format": "int64"
+                        },
+                        "float": {
+                          "format": "float"
+                        },
+                        "double": {
+                          "format": "double"
+                        },
+                        "password": {
+                          "format": "password"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "request with valid query attributes",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"int32\": 1,\"int64\": 1,\"float\": 1.1,\"double\": 1.1,\"password\": \"password\"}"
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "request with invalid query attributes ignored when type is string",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"int32\": \"string\", \"int64\": \"string\", \"float\": \"string\", \"double\": \"string\", \"password\": \"password\"}"
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "request with invalid query attributes",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"int32\": 1.2, \"int64\": 1.2, \"float\": 123, \"double\": 123, \"password\": \"password\"}"
+          }
+        },
+        "valid": false
+      }
+    ]
+  }
+]

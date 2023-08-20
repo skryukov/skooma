@@ -1,0 +1,111 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "bundler/setup"
+require "skooma"
+
+# Example:
+
+Skooma.create_registry
+
+OPENAPI_SCHEMA = {
+  "openapi": "3.1.0",
+  "info": { "title": "api", "version": "1.0.0" },
+  "paths": {
+    "/": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "foo": { "type": "string" },
+                    "bar": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/foo": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Foo"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Foo": {
+        "type": "object",
+        "properties": {
+          "foo": { "type": "string" },
+          "bar": { "type": "integer" }
+        }
+      }
+    }
+  }
+}
+
+REQUEST_SCHEMA = {
+  method: "get",
+  path: "/",
+  query: "?foo=bar",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  response: {
+    status: 200,
+    headers: {
+      "Content-Type": 'application/json'
+    },
+    body: {
+      foo: 'foo',
+      bar: 1
+    }
+  }
+}
+
+REQUEST_SCHEMA2 = {
+  method: "get",
+  path: "/foo",
+  query: "?foo=bar",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  response: {
+    status: 200,
+    headers: {
+      "Content-Type": 'application/json'
+    },
+    body: {
+      foo: 'foo',
+      bar: 1
+    }
+  }
+}
+
+OPENAPI = Skooma::OpenAPISchema.new(OPENAPI_SCHEMA)
+
+# OPENAPI.validate.output(:detailed)
+# result = OPENAPI.evaluate(REQUEST_SCHEMA)
+# result = OPENAPI.evaluate(REQUEST_SCHEMA2)
+# result.output(:detailed)
+
+require "irb"
+IRB.start(__FILE__)
