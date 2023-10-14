@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
+### Added
+
+- Add `minitest` and `rake-test` support. ([@skryukov])
+
 ## [0.1.0] - 2023-09-27
 
 ### Added
