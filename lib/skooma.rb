@@ -19,8 +19,8 @@ module Skooma
   JSONSkooma::Formatters.register :skooma, OutputFormat
 
   class << self
-    def create_registry
-      JSONSkooma.create_registry("2020-12", "oas-3.1", name: REGISTRY_NAME, assert_formats: true)
+    def create_registry(name: REGISTRY_NAME)
+      JSONSkooma.create_registry("2020-12", "oas-3.1", name: name, assert_formats: true)
     end
   end
 end

@@ -1,0 +1,53 @@
+openapi: 3.1.0
+info:
+  title: OpenAPI Sample
+  version: 1.0.0
+
+paths:
+  "/":
+    get:
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Item"
+      responses:
+        "201":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    Item:
+      type: object
+      unevaluatedProperties: false
+      required: [foo]
+      properties:
+        foo:
+          type: string
+          enum: [bar]
+    Error:
+      type: object
+      unevaluatedProperties: false
+      required: [message]
+      properties:
+        message:
+          type: string

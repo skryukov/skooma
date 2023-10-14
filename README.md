@@ -9,6 +9,7 @@ Features:
 - Supports OpenAPI 3.1.0
 - Supports OpenAPI document validation
 - Supports request/response validations against OpenAPI document
+- Includes RSpec and Minitest helpers
 
 <a href="https://evilmartians.com/?utm_source=skooma&utm_campaign=project_page">
 <img src="https://evilmartians.com/badges/sponsored-by-evil-martians.svg" alt="Sponsored by Evil Martians" width="236" height="54">
@@ -26,20 +27,24 @@ If bundler is not being used to manage dependencies, install the gem by executin
 
 ## Usage
 
-### Configuration
+Skooma provides `rspec` and `minitest` helpers for validating OpenAPI documents and requests/responses against them.
+Skooma helpers are designed to be used with `rails` request specs or `rack-test`.
+
+### RSpec
+
+#### Configuration
 
 ```ruby
 # spec/rails_helper.rb
 
 RSpec.configure do |config|
   # ...
-  Skooma.create_registry
   path_to_openapi = Rails.root.join("docs", "openapi.yml")
   config.include Skooma::RSpec[path_to_openapi], type: :request
 end
 ```
 
-### Validate OpenAPI document
+#### Validate OpenAPI document
 
 ```ruby
 # spec/openapi_spec.rb
@@ -53,7 +58,7 @@ describe "OpenAPI document", type: :request do
 end
 ```
 
-### Validate request
+#### Validate request
 
 ```ruby
 # spec/requests/feed_spec.rb
@@ -92,6 +97,55 @@ end
 #       "error"=>
 #         "The object is missing required properties"/
 #           " [\"animalId\", \"food\", \"amount\"]"}]}
+```
+
+### Minitest
+
+#### Configuration
+
+```ruby
+# test/test_helper.rb
+
+ActionDispatch::IntegrationTest.include Skooma::Minitest[Rails.root.join("docs", "openapi.yml")]
+```
+
+#### Validate OpenAPI document
+
+```ruby
+# test/openapi_test.rb
+
+require "test_helper"
+
+class OpenapiTest < ActionDispatch::IntegrationTest
+  test "is valid OpenAPI document" do
+    assert_is_valid_document(skooma_openapi_schema)
+  end
+end
+```
+
+#### Validate request
+
+```ruby
+# test/integration/items_test.rb
+
+require "test_helper"
+
+class ItemsTest < ActionDispatch::IntegrationTest
+  test "GET /" do
+    get "/"
+    assert_conform_schema(200)
+  end
+
+  test "POST / conforms to schema with 201 response code" do
+    post "/", params: {foo: "bar"}, as: :json
+    assert_conform_schema(201)
+  end
+
+  test "POST / conforms to schema with 400 response code" do
+    post "/", params: {foo: "baz"}, as: :json
+    assert_conform_response_schema(400)
+  end
+end
 ```
 
 ## Alternatives
