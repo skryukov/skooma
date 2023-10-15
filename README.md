@@ -157,7 +157,6 @@ end
 
 - Full support for external `$ref`s
 - Full OpenAPI 3.1.0 support:
-  - `discriminator` keyword
   - respect `style` and `explode` keywords
   - xml
 - Callbacks and webhooks validations

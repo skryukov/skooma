@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning].
 ### Added
 
 - Add `minitest` and `rake-test` support. ([@skryukov])
+- Add `discriminator` keyword support. ([@skryukov])
 
 ## [0.1.0] - 2023-09-27
 

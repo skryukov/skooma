@@ -12,6 +12,8 @@ module Skooma
 
           registry.add_vocabulary(
             "https://spec.openapis.org/oas/3.1/vocab/base",
+            Skooma::Keywords::OAS31::Dialect::AnyOf,
+            Skooma::Keywords::OAS31::Dialect::OneOf,
             Skooma::Keywords::OAS31::Dialect::Discriminator,
             Skooma::Keywords::OAS31::Dialect::Xml,
             Skooma::Keywords::OAS31::Dialect::ExternalDocs,

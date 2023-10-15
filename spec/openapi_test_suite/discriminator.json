@@ -1,0 +1,213 @@
+[
+  {
+    "description": "Discriminator",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {
+        "title": "api",
+        "version": "1.0.0"
+      },
+      "paths": {
+        "/": {
+          "get": {
+            "responses": {
+              "200": {
+                "description": "Success",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "oneOf": [
+                        {
+                          "$ref": "#/components/schemas/Cat"
+                        },
+                        {
+                          "$ref": "#/components/schemas/Doggy"
+                        },
+                        {
+                          "$ref": "#/components/schemas/CuteHamster"
+                        }
+                      ],
+                      "discriminator": {
+                        "propertyName": "kind",
+                        "mapping": {
+                          "Dog": "#/components/schemas/Doggy",
+                          "Hamster": "CuteHamster"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "components": {
+        "schemas": {
+          "Pet": {
+            "type": "object",
+            "required": [
+              "kind"
+            ],
+            "properties": {
+              "kind": {
+                "type": "string"
+              }
+            }
+          },
+          "Cat": {
+            "unevaluatedProperties": false,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Pet"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "color": {
+                    "type": "string"
+                  }
+                }
+              }
+            ]
+          },
+          "Doggy": {
+            "unevaluatedProperties": false,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Pet"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "breed": {
+                    "type": "string"
+                  }
+                }
+              }
+            ]
+          },
+          "CuteHamster": {
+            "unevaluatedProperties": false,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Pet"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "cuteness": {
+                    "type": "integer",
+                    "format": "int32"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "response with valid discriminator",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"color\": \"black\", \"kind\": \"Cat\"}"
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "response with valid mapped discriminator",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"breed\": \"pug\", \"kind\": \"Dog\"}"
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "response with valid mapped name-only discriminator",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"cuteness\": 9000, \"kind\": \"Hamster\"}"
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "response with unknown discriminator",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"kind\": \"Unicorn\"}"
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "response without discriminator value",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"foo\": \"bar\"}"
+          }
+        },
+        "valid": false
+      }
+    ]
+  }
+]
