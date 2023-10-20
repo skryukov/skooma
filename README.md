@@ -3,7 +3,7 @@
 [![Gem Version](https://badge.fury.io/rb/skooma.svg)](https://rubygems.org/gems/skooma)
 [![Ruby](https://github.com/skryukov/skooma/actions/workflows/main.yml/badge.svg)](https://github.com/skryukov/skooma/actions/workflows/main.yml)
 
-<img style="float: right" height="150" width="150" title="Skooma logo" src="./assets/logo.svg">
+<img align="right" height="150" width="150" title="Skooma logo" src="./assets/logo.svg">
 
 Skooma is a Ruby library for validating API implementations against OpenAPI documents.
 
