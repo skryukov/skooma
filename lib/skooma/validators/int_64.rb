@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Skooma
   module Validators
     class Int64 < JSONSkooma::Validators::Base
