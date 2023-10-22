@@ -6,7 +6,7 @@ require "zeitwerk"
 require_relative "skooma/inflector"
 
 loader = Zeitwerk::Loader.for_gem
-loader.inflector = Skooma::Inflector.new
+loader.inflector = Skooma::Inflector.new(__FILE__)
 loader.setup
 
 module Skooma

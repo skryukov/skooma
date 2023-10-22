@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Skooma
-  class Inflector < Zeitwerk::Inflector
+  class Inflector < Zeitwerk::GemInflector
     STATIC_MAPPING = {
       "oas_3_1" => "OAS31",
       "openapi" => "OpenAPI",
