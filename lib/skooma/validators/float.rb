@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Skooma
   module Validators
     class Float < JSONSkooma::Validators::Base
