@@ -18,8 +18,9 @@ module Skooma
           "keywordLocation" => node.path.to_s
         }
 
-        child_data = node.children.filter_map do |_, child|
-          node_data(child) unless child.valid?
+        child_data = []
+        node.each_children do |child|
+          child_data << node_data(child) unless child.valid?
         end
 
         if first || child_data.length > 1
