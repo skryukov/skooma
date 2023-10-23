@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
+## [0.2.1] - 2023-10-23
+
 ### Fixed
 
 - Raise error when parameter attributes misses required keys. ([@skryukov])
@@ -31,7 +33,8 @@ and this project adheres to [Semantic Versioning].
 
 [@skryukov]: https://github.com/skryukov
 
-[Unreleased]: https://github.com/skryukov/skooma/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/skryukov/skooma/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/skryukov/skooma/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/skryukov/skooma/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/skryukov/skooma/commits/v0.1.0
 
