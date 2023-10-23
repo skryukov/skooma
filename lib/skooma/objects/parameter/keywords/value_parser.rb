@@ -9,9 +9,11 @@ module Skooma
         module ValueParser
           class << self
             def call(instance, result)
-              type = result.sibling(instance, "in").annotation
-              key = result.sibling(instance, "name").annotation
-              raise Error, "Missing key: #{key}" unless key
+              type = result.sibling(instance, "in")&.annotation
+              raise Error, "Missing `in` key #{result.path}" unless type
+
+              key = result.sibling(instance, "name")&.annotation
+              raise Error, "Missing `name` key #{instance.path}: #{key}" unless key
 
               case type
               when "query"
@@ -30,7 +32,7 @@ module Skooma
               when "cookie"
                 # instance["headers"]["Cookie"]
               else
-                raise Error, "Unknown location: #{result.sibling(instance, "in").annotation}"
+                raise Error, "Unknown location: #{type}"
               end
             end
 
