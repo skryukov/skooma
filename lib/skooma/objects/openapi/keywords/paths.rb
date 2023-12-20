@@ -43,6 +43,8 @@ module Skooma
           private
 
           def find_route(instance_path)
+            instance_path = clear_path(instance_path, @parent_schema)
+
             return [instance_path, {}, json[instance_path]] if json.key?(instance_path)
 
             @regexp_map.reduce(nil) do |result, (path, path_regex, subschema)|
@@ -54,6 +56,16 @@ module Skooma
 
               [path, match.named_captures, subschema]
             end
+          end
+
+          def clear_path(path, parent_schema)
+            return path if parent_schema["servers"].nil?
+
+            parent_schema["servers"].each do |server|
+              path.sub! server["url"], ""
+            end
+
+            path
           end
         end
       end

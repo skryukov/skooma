@@ -7,6 +7,11 @@
         "title": "api",
         "version": "1.0.0"
       },
+      "servers": [
+        {
+          "url": "/v1"
+        }
+      ],
       "paths": {
         "/users/{id}": {
           "parameters": [
@@ -228,6 +233,26 @@
           },
           "response": {
             "status": 203,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"foo\": \"bar\"}"
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "remove the server prefix from the path",
+        "data": {
+          "method": "get",
+          "path": "/v1/users/me",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
             "headers": {
               "Content-Type": "application/json"
             },
