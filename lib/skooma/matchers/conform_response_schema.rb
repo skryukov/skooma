@@ -19,7 +19,7 @@ module Skooma
       end
 
       def failure_message
-        return "Expected #{@expected} status code" unless status_matches?
+        return "Expected #{@expected} status code, but got #{@mapped_response["response"]["status"]}" unless status_matches?
 
         super
       end

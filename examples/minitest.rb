@@ -1,14 +1,12 @@
 # frozen_string_literal: true
 
-$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), "..", "lib")) if ENV["CI"] == "1"
-
 require "bundler/inline"
 
 gemfile do
   source "https://rubygems.org"
   gem "minitest"
   gem "rack-test"
-  gem "skooma"
+  gem "skooma", (ENV["CI"] == "1") ? {path: File.join(__dir__, "..")} : {}
   gem "sinatra"
 end
 

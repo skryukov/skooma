@@ -50,5 +50,9 @@ jobs:
         run: bundle exec rspec
       - name: Run RSpec examples
         run: CI=1 ruby examples/rspec.rb
+      - name: Fix RubyGems activating older versions of gems
+        run: gem install timeout net-protocol stringio psych date
+      - name: Run RSpec Rails examples
+        run: CI=1 ruby examples/rspec_rails.rb
       - name: Run minitest example
         run: CI=1 ruby examples/minitest.rb

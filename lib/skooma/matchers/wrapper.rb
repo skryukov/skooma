@@ -23,18 +23,18 @@ module Skooma
 
         def request_object
           # `rails` integration
-          return request if defined?(::ActionDispatch)
+          return @request if defined?(::ActionDispatch) && @request.is_a?(::ActionDispatch::Request)
           # `rack-test` integration
-          return last_request if defined?(::Rack::Test)
+          return last_request if defined?(::Rack::Test) && defined?(:last_request)
 
           raise "Request object not found"
         end
 
         def response_object
           # `rails` integration
-          return response if defined?(::ActionDispatch)
+          return @response if defined?(::ActionDispatch) && @response.is_a?(::ActionDispatch::Response)
           # `rack-test` integration
-          return last_response if defined?(::Rack::Test)
+          return last_response if defined?(::Rack::Test) && defined?(:last_response)
 
           raise "Response object not found"
         end
