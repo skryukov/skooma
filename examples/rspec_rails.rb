@@ -4,29 +4,43 @@ require "bundler/inline"
 
 gemfile do
   source "https://rubygems.org"
+  gem "rails"
   gem "rspec"
-  gem "rack-test"
+  gem "rspec-rails"
   gem "skooma", (ENV["CI"] == "1") ? {path: File.join(__dir__, "..")} : {}
   gem "sinatra"
 end
 
 require_relative "test_app"
 
+require "rails"
+require "action_controller/railtie"
+require "rails/test_unit/railtie"
+
+require "rspec/rails"
 require "rspec/autorun"
 require "skooma"
+
+ENV["RAILS_ENV"] = "test"
 
 RSpec.configure do |config|
   path_to_openapi = File.join(__dir__, "openapi.yml")
   config.include Skooma::RSpec[path_to_openapi], type: :request
-
-  config.include Rack::Test::Methods, type: :request
 end
 
-describe TestApp, type: :request do
-  def app
-    TestApp
-  end
+class RailsApp < Rails::Application
+  config.load_defaults Rails::VERSION::STRING.to_f
+  config.eager_load = false
+  config.logger = Logger.new(nil)
 
+  routes.append do
+    mount TestApp, at: "/"
+  end
+end
+
+RailsApp.initialize!
+
+describe "Rails app", type: :request do
   describe "OpenAPI document", type: :request do
     subject(:schema) { skooma_openapi_schema }
 
@@ -37,10 +51,15 @@ describe TestApp, type: :request do
     subject { get "/" }
 
     it { is_expected.to conform_schema(200) }
+
+    it "returns correct response" do
+      subject
+      expect(response.parsed_body).to eq({"foo" => "bar"})
+    end
   end
 
   describe "POST /" do
-    subject { post("/", JSON.generate(body), "CONTENT_TYPE" => "application/json") }
+    subject { post("/", params: body, as: :json) }
 
     let(:body) { {foo: "bar"} }
 
