@@ -17,6 +17,7 @@
                   "application/json": {
                     "schema": {
                       "type": "object",
+                      "unevaluatedProperties": false,
                       "properties": {
                         "int32": {
                           "format": "int32"

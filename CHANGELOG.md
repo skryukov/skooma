@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning].
 ### Fixed
 
 - Better checks to automatic request/response detection to prevent methods overrides via RSpec helpers (i.e. `subject(:response)`). ([@skryukov])
+- Fail response validation when expected response code or `responses` keyword aren't listed. ([@skryukov])
 
 ## [0.2.1] - 2023-10-23
 

@@ -17,6 +17,7 @@
                   "application/json": {
                     "schema": {
                       "type": "object",
+                      "unevaluatedProperties": false,
                       "properties": {
                         "foo": {
                           "type": "string"
@@ -38,6 +39,7 @@
                 "application/json": {
                   "schema": {
                     "type": "object",
+                    "unevaluatedProperties": false,
                     "properties": {
                       "foo": {
                         "type": "string"
@@ -57,6 +59,7 @@
                   "application/json": {
                     "schema": {
                       "type": "object",
+                      "unevaluatedProperties": false,
                       "properties": {
                         "foo": {
                           "type": "string"
@@ -75,6 +78,7 @@
                   "application/json": {
                     "schema": {
                       "type": "object",
+                      "unevaluatedProperties": false,
                       "properties": {
                         "message": {
                           "type": "string"
@@ -111,6 +115,59 @@
                   }
                 }
               }
+            },
+            "responses": {
+              "200": {
+                "description": "OK",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/Foo"
+                    }
+                  }
+                }
+              },
+              "422": {
+                "description": "Unprocessable Entity",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "unevaluatedProperties": false,
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "/no_responses": {
+          "get": {}
+        },
+        "/with_default_response": {
+          "get": {
+            "responses": {
+              "default": {
+                "description": "Success",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "unevaluatedProperties": false,
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             }
           }
         }
@@ -119,6 +176,7 @@
         "schemas": {
           "Foo": {
             "type": "object",
+            "unevaluatedProperties": false,
             "properties": {
               "foo": {
                 "type": "string"
@@ -290,6 +348,103 @@
               "Content-Type": "application/json"
             },
             "body": "{\"message\": \"validation error\"}"
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "with default response",
+        "data": {
+          "method": "get",
+          "path": "/with_default_response",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"message\": \"ok\"}"
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "undocumented route path",
+        "data": {
+          "method": "get",
+          "path": "/unknown_path",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 404
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "undocumented route method",
+        "data": {
+          "method": "patch",
+          "path": "/simple_with_ref",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 404
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "undocumented route response code",
+        "data": {
+          "method": "post",
+          "path": "/simple_with_ref",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 418
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "no responses in schema",
+        "data": {
+          "method": "get",
+          "path": "/no_responses",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 418
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "no responses in schema request only",
+        "data": {
+          "method": "get",
+          "path": "/no_responses",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            }
           }
         },
         "valid": true

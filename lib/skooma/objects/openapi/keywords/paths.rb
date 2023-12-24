@@ -32,7 +32,7 @@ module Skooma
               subresult.annotate({"path_attributes" => attributes})
               path_schema.evaluate(instance, subresult)
 
-              if subresult.passed?
+              if subresult.passed? && subresult.children.any?
                 result.success
               else
                 result.failure("Path #{instance["path"]} is invalid")

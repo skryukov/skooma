@@ -123,6 +123,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
+                  "unevaluatedProperties": false,
                   "properties": {
                     "foo": {
                       "type": "string"

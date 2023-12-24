@@ -15,6 +15,7 @@
                 "application/json": {
                   "schema": {
                     "type": "object",
+                    "unevaluatedProperties": false,
                     "properties": {
                       "foo": {
                         "type": "string"
@@ -47,6 +48,7 @@
                   "application/json": {
                     "schema": {
                       "type": "object",
+                      "unevaluatedProperties": false,
                       "properties": {
                         "foo": {
                           "type": "string"
