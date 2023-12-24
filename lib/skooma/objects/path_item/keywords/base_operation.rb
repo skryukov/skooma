@@ -8,6 +8,10 @@ module Skooma
           def evaluate(instance, result)
             return result.discard unless instance["method"] == key
 
+            if json["responses"].nil? && instance["response"]
+              return result.failure("Responses are not listed for #{key.upcase} #{instance["path"]}")
+            end
+
             json.evaluate(instance, result)
             return result.success if result.passed?
 
