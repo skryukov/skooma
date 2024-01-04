@@ -14,6 +14,10 @@ Skooma is a Ruby library for validating API implementations against OpenAPI docu
 - Supports request/response validations against OpenAPI document
 - Includes RSpec and Minitest helpers
 
+### Learn more
+
+- [Let there be docs! A documentation-first approach to Rails API development](https://evilmartians.com/events/let-there-be-docs-a-documentation-first-approach-to-rails-api-development) – Talk and slides from Friendly.rb 2023
+
 <a href="https://evilmartians.com/?utm_source=skooma&utm_campaign=project_page">
 <img src="https://evilmartians.com/badges/sponsored-by-evil-martians.svg" alt="Sponsored by Evil Martians" width="236" height="54">
 </a>
