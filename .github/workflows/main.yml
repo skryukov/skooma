@@ -19,7 +19,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.2"
+          ruby-version: "3.3"
           bundler-cache: true
       - name: Run StandardRB
         run: bundle exec standardrb
@@ -33,6 +33,7 @@ jobs:
     strategy:
       matrix:
         ruby:
+          - "3.3"
           - "3.2"
           - "3.1"
           - "3.0"
@@ -40,7 +41,7 @@ jobs:
           - "jruby"
           - "truffleruby"
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
