@@ -23,6 +23,10 @@ RSpec.configure do |config|
 end
 ```
 
+### Changed
+
+- Bump `json_skooma` version to `~> 0.2.0`. ([@skryukov])
+
 ### Fixed
 
 - Better checks to automatic request/response detection to prevent methods overrides via RSpec helpers (i.e. `subject(:response)`). ([@skryukov])
