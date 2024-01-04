@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.authors = ["Svyatoslav Kryukov"]
   spec.email = ["me@skryukov.dev"]
 
-  spec.summary = "I bring some sugar for your APIs."
-  spec.description = "I bring some sugar for your APIs."
+  spec.summary = "Validate API implementations against OpenAPI documents."
+  spec.description = "Apply a documentation-first approach to API development."
   spec.homepage = "https://github.com/skryukov/skooma"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 2.6.0"
