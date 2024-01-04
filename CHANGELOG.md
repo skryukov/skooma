@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
+
+### Added
+
+- Add support for APIs mounted under a path prefix. ([@skryukov])
+
+```ruby
+# spec/rails_helper.rb
+
+RSpec.configure do |config|
+  # ...
+  path_to_openapi = Rails.root.join("docs", "openapi.yml")
+  # pass path_prefix option if your API is mounted under a prefix:
+  config.include Skooma::RSpec[path_to_openapi, path_prefix: "/internal/api"], type: :request
+end
+```
+
 ### Fixed
 
 - Better checks to automatic request/response detection to prevent methods overrides via RSpec helpers (i.e. `subject(:response)`). ([@skryukov])

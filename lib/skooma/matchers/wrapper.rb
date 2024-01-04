@@ -40,7 +40,7 @@ module Skooma
         end
       end
 
-      def initialize(helper_methods_module, openapi_path, base_uri: "https://skoomarb.dev/")
+      def initialize(helper_methods_module, openapi_path, base_uri: "https://skoomarb.dev/", path_prefix: "")
         super()
 
         registry = create_test_registry
@@ -50,6 +50,7 @@ module Skooma
           JSONSkooma::Sources::Local.new(pathname.dirname.to_s)
         )
         schema = registry.schema(URI.parse("#{base_uri}#{pathname.basename}"), schema_class: Skooma::Objects::OpenAPI)
+        schema.path_prefix = path_prefix
 
         include DefaultHelperMethods
         include helper_methods_module

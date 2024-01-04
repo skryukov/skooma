@@ -12,7 +12,7 @@ module Skooma
           def initialize(parent_schema, value)
             super
             keys = json.filter_map { |v| v["in"] && [v["in"].value, v["name"].value] }
-            parent_params = (parent_schema.parent["parameters"] || [])
+            parent_params = parent_schema.parent["parameters"] || []
             parent_params.reject! do |v|
               v["in"] && keys.include?([v["in"].value, v["name"].value])
             end
