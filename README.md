@@ -44,6 +44,9 @@ RSpec.configure do |config|
   # ...
   path_to_openapi = Rails.root.join("docs", "openapi.yml")
   config.include Skooma::RSpec[path_to_openapi], type: :request
+
+  # OR pass path_prefix option if your API is mounted under a prefix:
+  config.include Skooma::RSpec[path_to_openapi, path_prefix: "/internal/api"], type: :request
 end
 ```
 

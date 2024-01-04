@@ -31,6 +31,18 @@ module Skooma
         super(Instance.new(instance), result)
       end
 
+      def path_prefix=(value)
+        raise ArgumentError, "Path prefix must be a string" unless value.is_a?(String)
+
+        @path_prefix = value
+        @path_prefix = "/#{@path_prefix}" unless @path_prefix.start_with?("/")
+        @path_prefix = @path_prefix.delete_suffix("/") if @path_prefix.end_with?("/")
+      end
+
+      def path_prefix
+        @path_prefix || ""
+      end
+
       def json_schema_dialect_uri
         @json_schema_dialect_uri || parent_schema&.json_schema_dialect_uri
       end

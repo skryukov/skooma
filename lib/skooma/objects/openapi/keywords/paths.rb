@@ -43,6 +43,7 @@ module Skooma
           private
 
           def find_route(instance_path)
+            instance_path = instance_path.delete_prefix(json.root.path_prefix)
             return [instance_path, {}, json[instance_path]] if json.key?(instance_path)
 
             @regexp_map.reduce(nil) do |result, (path, path_regex, subschema)|
