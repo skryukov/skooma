@@ -13,7 +13,7 @@ module Skooma
               raise Error, "Missing `in` key #{result.path}" unless type
 
               key = result.sibling(instance, "name")&.annotation
-              raise Error, "Missing `name` key #{instance.path}: #{key}" unless key
+              raise Error, "Missing `name` key #{result.path}" unless key
 
               case type
               when "query"
