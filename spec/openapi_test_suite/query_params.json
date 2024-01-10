@@ -13,8 +13,8 @@
             "parameters": [
               {
                 "in": "query",
-                "name": "foo",
                 "required": true,
+                "name": "foo",
                 "schema": {
                   "type": "string",
                   "minLength": 3
@@ -22,7 +22,7 @@
               },
               {
                 "in": "query",
-                "name": "bar",
+                "required": false,
                 "content": {
                   "application/json": {
                     "schema": {
@@ -30,7 +30,8 @@
                       "minLength": 3
                     }
                   }
-                }
+                },
+                "name": "bar"
               }
             ],
             "responses": {
