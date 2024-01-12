@@ -45,11 +45,13 @@ module Skooma
 
         registry = create_test_registry
         pathname = Pathname.new(openapi_path)
+        source_uri = "#{base_uri}#{path_prefix.delete_suffix("/")}"
+        source_uri += "/" unless source_uri.end_with?("/")
         registry.add_source(
-          base_uri,
+          source_uri,
           JSONSkooma::Sources::Local.new(pathname.dirname.to_s)
         )
-        schema = registry.schema(URI.parse("#{base_uri}#{pathname.basename}"), schema_class: Skooma::Objects::OpenAPI)
+        schema = registry.schema(URI.parse("#{source_uri}#{pathname.basename}"), schema_class: Skooma::Objects::OpenAPI)
         schema.path_prefix = path_prefix
 
         include DefaultHelperMethods

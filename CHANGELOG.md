@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
+### Added
+
+- Add support for multiple OpenAPI documents. ([@skryukov])
+
 ### Fixed
 
 - Fix `Skooma::Error: Missing name key /request` by setting `content` and `required` keyword dependencies. ([@skryukov])

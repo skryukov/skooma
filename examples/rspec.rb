@@ -24,7 +24,7 @@ end
 
 describe TestApp, type: :request do
   def app
-    TestApp
+    TestApp["bar"]
   end
 
   describe "OpenAPI document", type: :request do
