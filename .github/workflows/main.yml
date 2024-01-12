@@ -7,6 +7,9 @@ on:
 
   pull_request:
 
+env:
+  CI: 1
+
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -50,10 +53,13 @@ jobs:
       - name: Run RSpec
         run: bundle exec rspec
       - name: Run RSpec examples
-        run: CI=1 ruby examples/rspec.rb
+        run: ruby examples/rspec.rb
       - name: Fix RubyGems activating older versions of gems
         run: gem install timeout net-protocol stringio psych date
-      - name: Run RSpec Rails examples
-        run: CI=1 ruby examples/rspec_rails.rb
       - name: Run minitest example
-        run: CI=1 ruby examples/minitest.rb
+        run: ruby examples/minitest.rb
+      - name: Run RSpec Rails examples
+        working-directory: ./examples/rails_app
+        run: |
+          bundle install
+          bundle exec rspec

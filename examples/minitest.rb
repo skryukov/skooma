@@ -21,7 +21,7 @@ describe TestApp do
   include Skooma::Minitest[File.join(__dir__, "openapi.yml")]
 
   def app
-    TestApp
+    TestApp["bar"]
   end
 
   it "is valid OpenAPI document" do

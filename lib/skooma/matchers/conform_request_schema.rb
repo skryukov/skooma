@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "pp"
+
 module Skooma
   module Matchers
     class ConformRequestSchema
