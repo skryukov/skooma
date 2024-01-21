@@ -9,7 +9,7 @@ module Skooma
       def call(env, response = nil, with_response: true, with_request: true)
         result = {
           "method" => env["REQUEST_METHOD"].downcase,
-          "path" => env["PATH_INFO"]
+          "path" => env["action_dispatch.original_path"] || env["PATH_INFO"]
         }
         result["request"] = map_request(env) if with_request
         result["response"] = map_response(response) if response && with_response
