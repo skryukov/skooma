@@ -23,8 +23,17 @@ module Skooma
         {
           "query" => env["rack.request.query_string"] || env["QUERY_STRING"],
           "headers" => env.select { |k, _| k.start_with?("HTTP_") || PLAIN_HEADERS.include?(k) }.transform_keys { |k| k.sub(REGEXP_HTTP, "").split("_").map(&:capitalize).join("-") },
-          "body" => env["RAW_POST_DATA"]
+          "body" => env["RAW_POST_DATA"] || read_rack_input(env["rack.input"])
         }
+      end
+
+      def read_rack_input(input)
+        return nil unless input.respond_to?(:rewind)
+
+        input.rewind
+        raw_input = input.read
+        input.rewind
+        raw_input
       end
 
       def map_response(response)
