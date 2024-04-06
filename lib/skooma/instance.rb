@@ -63,16 +63,16 @@ module Skooma
         data = {}
         data["status"] = JSONSkooma::JSONNode.new(value.fetch("status"), key: "status", parent: self)
         data["headers"] = Headers.new(value.fetch("headers", {}), key: "headers", parent: self)
-        body_value = parse_body(value["body"], data["headers"]&.[]("Content-Type"))
+        body_value = parse_body(value["body"], data["headers"])
         data["body"] = Attribute.new(body_value, key: "body", parent: self)
         ["object", data]
       end
 
-      def parse_body(body, content_type)
+      def parse_body(body, headers)
         return nil unless body
 
-        parser = BodyParsers[content_type&.split(";")&.first]
-        parser ? parser.call(body) : body
+        parser = BodyParsers[headers["Content-Type"]&.value&.split(";")&.first]
+        parser ? parser.call(body, headers: headers) : body
       end
     end
 
@@ -83,16 +83,16 @@ module Skooma
         data = {}
         data["query"] = Attribute.new(value.fetch("query", ""), key: "query", parent: self)
         data["headers"] = Headers.new(value.fetch("headers", {}), key: "headers", parent: self)
-        body_value = parse_body(value["body"], data["headers"]&.[]("Content-Type"))
+        body_value = parse_body(value["body"], data["headers"])
         data["body"] = Attribute.new(body_value, key: "body", parent: self)
         ["object", data]
       end
 
-      def parse_body(body, content_type)
+      def parse_body(body, headers)
         return nil unless body
 
-        parser = BodyParsers[content_type&.split(";")&.first]
-        parser ? parser.call(body) : body
+        parser = BodyParsers[headers["Content-Type"]&.value&.split(";")&.first]
+        parser ? parser.call(body, headers: headers) : body
       end
     end
 

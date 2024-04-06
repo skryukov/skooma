@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
+### Changed
+
+- BREAKING CHANGE: Pass `headers` parameter to registered `BodyParsers`. ([@skryukov])
+
+    ```ruby
+    # Before:
+    Skooma::BodyParsers.register("application/xml", ->(body) { Hash.from_xml(body) })
+    # After:
+    Skooma::BodyParsers.register("application/xml", ->(body, headers:) { Hash.from_xml(body) })
+    ```
+
 ## [0.2.3] - 2024-01-18
 
 ### Added
