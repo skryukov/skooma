@@ -17,6 +17,9 @@ and this project adheres to [Semantic Versioning].
     # After:
     Skooma::BodyParsers.register("application/xml", ->(body, headers:) { Hash.from_xml(body) })
     ```
+### Fixed
+
+- Fix wrong path when combined with Rails exceptions_app. ([@ursm])
 
 ## [0.2.3] - 2024-01-18
 
@@ -79,6 +82,7 @@ end
 - Initial implementation. ([@skryukov])
 
 [@skryukov]: https://github.com/skryukov
+[@ursm]: https://github.com/ursm
 
 [Unreleased]: https://github.com/skryukov/skooma/compare/v0.2.3...HEAD
 [0.2.3]: https://github.com/skryukov/skooma/compare/v0.2.2...v0.2.3
