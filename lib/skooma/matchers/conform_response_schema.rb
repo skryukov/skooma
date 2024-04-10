@@ -3,8 +3,8 @@
 module Skooma
   module Matchers
     class ConformResponseSchema < ConformRequestSchema
-      def initialize(schema, mapped_response, expected)
-        super(schema, mapped_response)
+      def initialize(skooma, mapped_response, expected)
+        super(skooma, mapped_response)
         @expected = expected
       end
 

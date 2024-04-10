@@ -13,12 +13,16 @@ module Skooma
             end
 
             json.evaluate(instance, result)
-            return result.success if result.passed?
 
             path_item_result = result.parent
             path_item_result = path_item_result.parent until path_item_result.key.start_with?("/")
 
-            path = path_item_result.annotation["path"]
+            paths_result = path_item_result.parent
+            paths_result.annotate(paths_result.annotation.merge("method" => key))
+
+            return result.success if result.passed?
+
+            path = paths_result.annotation["current_path"]
 
             result.failure("Path #{path}/#{key} is invalid")
           end

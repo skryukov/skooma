@@ -5,13 +5,17 @@ require "pp"
 module Skooma
   module Matchers
     class ConformRequestSchema
-      def initialize(schema, mapped_response)
-        @schema = schema
+      def initialize(skooma, mapped_response)
+        @skooma = skooma
+        @schema = skooma.schema
         @mapped_response = mapped_response
       end
 
       def matches?(*)
         @result = @schema.evaluate(@mapped_response)
+
+        @skooma.coverage.track_request(@result) if @mapped_response["response"]
+
         @result.valid?
       end
 

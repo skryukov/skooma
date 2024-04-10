@@ -28,6 +28,8 @@ module Skooma
 
             return result.failure("Path #{instance["path"]} not found in schema") unless path
 
+            result.annotate({"current_path" => path})
+
             result.call(instance, path) do |subresult|
               subresult.annotate({"path_attributes" => attributes})
               path_schema.evaluate(instance, subresult)

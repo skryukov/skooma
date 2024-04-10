@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
+### Added
+
+- Add coverage for tested API operations. ([@skryukov])
+ 
+    ```ruby
+    
+    # spec/rails_helper.rb
+    
+    RSpec.configure do |config|
+      # To enable coverage, pass `coverage: :report` option,
+      # and to raise an error when an operation is not covered, pass `coverage: :strict` option:
+      config.include Skooma::RSpec[Rails.root.join("docs", "openapi.yml"), coverage: :report], type: :request
+    end
+    ```
+
+    ```shell
+    $ bundle exec rspec
+    # ...
+    OpenAPI schema /openapi.yml coverage report: 110 / 194 operations (56.7%) covered.
+    Uncovered paths:
+    GET /api/uncovered 200
+    GET /api/partially_covered 403
+    # ...
+    ```
+
 ## [0.3.0] - 2024-04-09
 
 ### Changed
@@ -39,16 +64,16 @@ and this project adheres to [Semantic Versioning].
 
 - Add support for APIs mounted under a path prefix. ([@skryukov])
 
-```ruby
-# spec/rails_helper.rb
-
-RSpec.configure do |config|
-  # ...
-  path_to_openapi = Rails.root.join("docs", "openapi.yml")
-  # pass path_prefix option if your API is mounted under a prefix:
-  config.include Skooma::RSpec[path_to_openapi, path_prefix: "/internal/api"], type: :request
-end
-```
+    ```ruby
+    # spec/rails_helper.rb
+    
+    RSpec.configure do |config|
+      # ...
+      path_to_openapi = Rails.root.join("docs", "openapi.yml")
+      # pass path_prefix option if your API is mounted under a prefix:
+      config.include Skooma::RSpec[path_to_openapi, path_prefix: "/internal/api"], type: :request
+    end
+    ```
 
 ### Changed
 

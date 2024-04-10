@@ -51,6 +51,10 @@ RSpec.configure do |config|
 
   # OR pass path_prefix option if your API is mounted under a prefix:
   config.include Skooma::RSpec[path_to_openapi, path_prefix: "/internal/api"], type: :request
+
+  # To enable coverage, pass `coverage: :report` option,
+  # and to raise an error when an operation is not covered, pass `coverage: :strict` option:
+  config.include Skooma::RSpec[path_to_openapi, coverage: :report], type: :request
 end
 ```
 
