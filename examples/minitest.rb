@@ -18,7 +18,8 @@ require "skooma"
 
 describe TestApp do
   include Rack::Test::Methods
-  include Skooma::Minitest[File.join(__dir__, "openapi.yml")]
+
+  include Skooma::Minitest[File.join(__dir__, "openapi.yml"), coverage: :report]
 
   def app
     TestApp["bar"]

@@ -38,29 +38,38 @@ module Skooma
 
           raise "Response object not found"
         end
+
+        def skooma_openapi_schema
+          skooma.schema
+        end
       end
 
-      def initialize(helper_methods_module, openapi_path, base_uri: "https://skoomarb.dev/", path_prefix: "")
+      def initialize(helper_methods_module, openapi_path, base_uri: "https://skoomarb.dev/", path_prefix: "", **params)
         super()
 
         registry = create_test_registry
         pathname = Pathname.new(openapi_path)
-        source_uri = "#{base_uri}#{path_prefix.delete_suffix("/")}"
+        source_uri = "#{base_uri}#{path_prefix.delete_suffix("/").delete_prefix("/")}"
         source_uri += "/" unless source_uri.end_with?("/")
         registry.add_source(
           source_uri,
           JSONSkooma::Sources::Local.new(pathname.dirname.to_s)
         )
-        schema = registry.schema(URI.parse("#{source_uri}#{pathname.basename}"), schema_class: Skooma::Objects::OpenAPI)
-        schema.path_prefix = path_prefix
+        @schema = registry.schema(URI.parse("#{source_uri}#{pathname.basename}"), schema_class: Skooma::Objects::OpenAPI)
+        @schema.path_prefix = path_prefix
+
+        @coverage = Coverage.new(@schema, mode: params[:coverage], format: params[:coverage_format])
 
         include DefaultHelperMethods
         include helper_methods_module
 
-        define_method :skooma_openapi_schema do
-          schema
+        skooma_self = self
+        define_method :skooma do
+          skooma_self
         end
       end
+
+      attr_accessor :schema, :coverage
 
       private
 

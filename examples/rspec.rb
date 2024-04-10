@@ -17,7 +17,7 @@ require "skooma"
 
 RSpec.configure do |config|
   path_to_openapi = File.join(__dir__, "openapi.yml")
-  config.include Skooma::RSpec[path_to_openapi], type: :request
+  config.include Skooma::RSpec[path_to_openapi, coverage: :strict], type: :request
 
   config.include Rack::Test::Methods, type: :request
 end
