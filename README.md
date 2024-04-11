@@ -16,7 +16,7 @@ Skooma is a Ruby library for validating API implementations against OpenAPI docu
 
 ### Learn more
 
-- [Let there be docs! A documentation-first approach to Rails API development](https://evilmartians.com/events/let-there-be-docs-a-documentation-first-approach-to-rails-api-development) – Talk and slides from Friendly.rb 2023
+- [Let there be docs! A documentation-first approach to Rails API development](https://evilmartians.com/chronicles/let-there-be-docs-a-documentation-first-approach-to-rails-api-development)
 
 <a href="https://evilmartians.com/?utm_source=skooma&utm_campaign=project_page">
 <img src="https://evilmartians.com/badges/sponsored-by-evil-martians.svg" alt="Sponsored by Evil Martians" width="236" height="54">
@@ -119,8 +119,15 @@ end
 
 ```ruby
 # test/test_helper.rb
+path_to_openapi = Rails.root.join("docs", "openapi.yml")
+ActionDispatch::IntegrationTest.include Skooma::Minitest[path_to_openapi]
 
-ActionDispatch::IntegrationTest.include Skooma::Minitest[Rails.root.join("docs", "openapi.yml")]
+# OR pass path_prefix option if your API is mounted under a prefix:
+ActionDispatch::IntegrationTest.include Skooma::Minitest[path_to_openapi, path_prefix: "/internal/api"], type: :request
+
+# To enable coverage, pass `coverage: :report` option,
+# and to raise an error when an operation is not covered, pass `coverage: :strict` option:
+ActionDispatch::IntegrationTest.include Skooma::Minitest[path_to_openapi, coverage: :report], type: :request
 ```
 
 #### Validate OpenAPI document
