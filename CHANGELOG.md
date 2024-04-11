@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
+## [0.3.1] - 2024-04-11
+
 ### Added
 
 - Add coverage for tested API operations. ([@skryukov])
