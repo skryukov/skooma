@@ -7,6 +7,11 @@ require_relative "skooma/inflector"
 
 loader = Zeitwerk::Loader.for_gem
 loader.inflector = Skooma::Inflector.new(__FILE__)
+
+# Do not eager load the test helpers
+loader.do_not_eager_load(File.join(__dir__, "skooma", "minitest.rb"))
+loader.do_not_eager_load(File.join(__dir__, "skooma", "rspec.rb"))
+
 loader.setup
 
 module Skooma
