@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix deprecation `MiniTest::Unit.after_tests is now Minitest.after_run`. ([@barnaclebarnes])
+- Exclude test helpers from eager loading. ([@skryukov])
+
 ## [0.3.1] - 2024-04-11
 
 ### Added
@@ -110,6 +115,7 @@ and this project adheres to [Semantic Versioning].
 
 - Initial implementation. ([@skryukov])
 
+[@barnaclebarnes]: https://github.com/barnaclebarnes
 [@skryukov]: https://github.com/skryukov
 [@ursm]: https://github.com/ursm
 
