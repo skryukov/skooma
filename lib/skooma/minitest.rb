@@ -6,7 +6,7 @@ module Skooma
   # Minitest helpers for OpenAPI schema validation
   # @example
   #   describe TestApp do
-  #     include Skooma::RSpec[Rails.root.join("docs", "openapi.yml")]
+  #     include Skooma::Minitest[Rails.root.join("docs", "openapi.yml")]
   #     # ...
   #   end
   class Minitest < Matchers::Wrapper
