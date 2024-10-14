@@ -1,18 +1,7 @@
-# frozen_string_literal: true
-
-require "bundler/inline"
-
-gemfile do
-  source "https://rubygems.org"
-  gem "rspec"
-  gem "rack-test"
-  gem "skooma", (ENV["CI"] == "1") ? {path: File.join(__dir__, "..")} : {}
-  gem "sinatra"
-end
-
 require_relative "test_app"
 
 require "rspec/autorun"
+require "rack/test"
 require "skooma"
 
 RSpec.configure do |config|

@@ -1,15 +1,5 @@
 # frozen_string_literal: true
 
-require "bundler/inline"
-
-gemfile do
-  source "https://rubygems.org"
-  gem "minitest"
-  gem "rack-test"
-  gem "skooma", (ENV["CI"] == "1") ? {path: File.join(__dir__, "..")} : {}
-  gem "sinatra"
-end
-
 require_relative "test_app"
 
 require "minitest/autorun"

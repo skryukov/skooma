@@ -52,13 +52,15 @@ jobs:
           bundler-cache: true
       - name: Run RSpec
         run: bundle exec rspec
-      - name: Run RSpec examples
-        run: ruby examples/rspec.rb
-      - name: Fix RubyGems activating older versions of gems
-        run: gem install timeout net-protocol stringio psych date
+      - name: Install RSpec example dependencies
+        run: bundle install --gemfile ./examples/Gemfile-rspec
+      - name: Run RSpec example
+        run: bundle exec --gemfile ./examples/Gemfile-rspec ruby examples/rspec.rb
+      - name: Install minitest example dependencies
+        run: bundle install --gemfile ./examples/Gemfile-minitest
       - name: Run minitest example
-        run: ruby examples/minitest.rb
-      - name: Run RSpec Rails examples
+        run: bundle exec --gemfile ./examples/Gemfile-minitest ruby examples/minitest.rb
+      - name: Run RSpec Rails example
         working-directory: ./examples/rails_app
         run: |
           bundle install
