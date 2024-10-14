@@ -1,0 +1,8 @@
+# frozen_string_literal: true
+
+source "https://rubygems.org"
+
+gem "rspec"
+gem "rack-test"
+gem "skooma", (ENV["CI"] == "1") ? {path: File.join(__dir__, "..")} : {}
+gem "sinatra"
