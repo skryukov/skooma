@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
+## [0.3.3] - 2024-10-14
+
+### Fixed
+
+- Fix coverage for Minitest. ([@skryukov])
+
 ## [0.3.2] - 2024-06-24
 
 ### Fixed
@@ -122,7 +128,8 @@ and this project adheres to [Semantic Versioning].
 [@skryukov]: https://github.com/skryukov
 [@ursm]: https://github.com/ursm
 
-[Unreleased]: https://github.com/skryukov/skooma/compare/v0.3.2...HEAD
+[Unreleased]: https://github.com/skryukov/skooma/compare/v0.3.3...HEAD
+[0.3.3]: https://github.com/skryukov/skooma/compare/v0.3.2...v0.3.3
 [0.3.2]: https://github.com/skryukov/skooma/compare/v0.3.1...v0.3.2
 [0.3.1]: https://github.com/skryukov/skooma/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/skryukov/skooma/compare/v0.2.3...v0.3.0
