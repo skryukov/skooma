@@ -1,5 +1,7 @@
-require_relative "test_app"
+# frozen_string_literal: true
 
+ENV["APP_ENV"] = "test"
+require_relative "test_app"
 require "rspec/autorun"
 require "rack/test"
 require "skooma"

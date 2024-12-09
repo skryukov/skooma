@@ -1,4 +1,5 @@
 ENV["RAILS_ENV"] = "test"
+ENV["APP_ENV"] = "test"
 
 require_relative "../app"
 
