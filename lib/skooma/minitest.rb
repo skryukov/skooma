@@ -39,7 +39,10 @@ module Skooma
     def initialize(openapi_path, **params)
       super(HelperMethods, openapi_path, **params)
 
-      ::Minitest.after_run { coverage.report }
+      ::Minitest.after_run do
+        coverage.report
+        File.delete(coverage.storage.file_path) if File.exist?(coverage.storage.file_path)
+      end
     end
   end
 end
