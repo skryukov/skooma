@@ -37,7 +37,7 @@ module Skooma
     end
 
     def parse_data(content)
-      return { defined_paths: Set.new, covered_paths: Set.new } if content.strip.empty?
+      return {defined_paths: Set.new, covered_paths: Set.new} if content.strip.empty?
 
       data = JSON.parse(content, symbolize_names: true)
       {
