@@ -27,5 +27,6 @@ module Skooma
       end
     end
     register "application/json", JSONParser
+    register "application/vnd.api+json", JSONParser
   end
 end
