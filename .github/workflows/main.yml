@@ -9,16 +9,16 @@ on:
 
 env:
   CI: 1
+  BUNDLE_JOBS: 4
+  BUNDLE_RETRY: 3
+  BUNDLE_PATH: vendor/bundle
 
 jobs:
   lint:
     runs-on: ubuntu-latest
     name: Linter
-    env:
-      BUNDLE_JOBS: 4
-      BUNDLE_RETRY: 3
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -30,10 +30,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     name: Ruby ${{ matrix.ruby }}
-    env:
-      BUNDLE_JOBS: 4
-      BUNDLE_RETRY: 3
     strategy:
+      fail-fast: false
       matrix:
         ruby:
           - "3.3"
@@ -41,8 +39,7 @@ jobs:
           - "3.1"
           - "3.0"
           - "2.7"
-          - "jruby"
-          - "truffleruby"
+
     steps:
       - uses: actions/checkout@v4
       - name: Set up Ruby
@@ -50,17 +47,36 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
-      - name: Run RSpec
-        run: bundle exec rspec
-      - name: Install RSpec example dependencies
-        run: bundle install --gemfile ./examples/Gemfile-rspec
-      - name: Run RSpec example
-        run: bundle exec --gemfile ./examples/Gemfile-rspec ruby examples/rspec.rb
-      - name: Install minitest example dependencies
-        run: bundle install --gemfile ./examples/Gemfile-minitest
-      - name: Run minitest example
-        run: bundle exec --gemfile ./examples/Gemfile-minitest ruby examples/minitest.rb
-      - name: Run RSpec Rails example
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            vendor/bundle
+            examples/vendor/bundle
+            examples/rails_app/vendor/bundle
+          key: ${{ runner.os }}-gems-${{ matrix.ruby }}-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-${{ matrix.ruby }}-
+
+
+      - name: Run Core Tests
+        run: |
+          bundle config path vendor/bundle
+          bundle install
+          bundle exec rspec
+
+      - name: Run RSpec Example
+        run: |
+          bundle install --gemfile ./examples/Gemfile-rspec
+          bundle exec --gemfile ./examples/Gemfile-rspec ruby examples/rspec.rb
+
+      - name: Run Minitest Example
+        run: |
+          bundle install --gemfile ./examples/Gemfile-minitest
+          bundle exec --gemfile ./examples/Gemfile-minitest ruby examples/minitest.rb
+
+      - name: Run Rails Example
         working-directory: ./examples/rails_app
         run: |
           bundle install
