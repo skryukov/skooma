@@ -1,0 +1,239 @@
+[
+  {
+    "description": "ReadOnly and WriteOnly Properties Ignored by Default Test Suite",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {
+        "title": "api",
+        "version": "1.0.0"
+      },
+      "paths": {
+        "/": {
+          "post": {
+            "requestBody": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            },
+            "responses": {
+              "201": {
+                "description": "Created",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "components": {
+        "schemas": {
+          "Id": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "User": {
+            "type": "object",
+            "required": [
+              "id",
+              "name",
+              "password"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "$ref": "#/components/schemas/Id"
+              },
+              "name": {
+                "type": "string"
+              },
+              "password": {
+                "type": "string",
+                "writeOnly": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "readOnly and writeOnly are ignored",
+        "data": {
+          "method": "post",
+          "path": "/",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"name\": \"John Doe\", \"password\": \"secret\"}"
+          },
+          "response": {
+            "status": 201,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"id\": 1, \"name\": \"John Doe\"}"
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "request with invalid response body",
+        "data": {
+          "method": "post",
+          "path": "/",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"name\": \"John Doe\", \"password\": \"secret\"}"
+          },
+          "response": {
+            "status": 201,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"id\": \"1\"}"
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "request with invalid request body",
+        "data": {
+          "method": "post",
+          "path": "/",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"name\": \"John Doe\", \"password\": 1}"
+          },
+          "response": {
+            "status": 201,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"id\": 1, \"name\": \"John Doe\"}"
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "request with readOnly property in request body",
+        "data": {
+          "method": "post",
+          "path": "/",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"id\": 1, \"name\": \"John Doe\", \"password\": \"secret\"}"
+          },
+          "response": {
+            "status": 201,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"id\": 1, \"name\": \"John Doe\"}"
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "response with writeOnly property",
+        "data": {
+          "method": "post",
+          "path": "/",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"name\": \"John Doe\", \"password\": \"secret\"}"
+          },
+          "response": {
+            "status": 201,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"id\": 1, \"name\": \"John Doe\", \"password\": \"secret\"}"
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "missing required password in request",
+        "data": {
+          "method": "post",
+          "path": "/",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"name\": \"John Doe\"}"
+          },
+          "response": {
+            "status": 201,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"id\": 1, \"name\": \"John Doe\"}"
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "missing required id in response",
+        "data": {
+          "method": "post",
+          "path": "/",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"name\": \"John Doe\", \"password\": \"secret\"}"
+          },
+          "response": {
+            "status": 201,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"name\": \"John Doe\"}"
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "wrong id type in response",
+        "data": {
+          "method": "post",
+          "path": "/",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"name\": \"John Doe\", \"password\": \"secret\"}"
+          },
+          "response": {
+            "status": 201,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"id\": \"abc\", \"name\": \"John Doe\"}"
+          }
+        },
+        "valid": false
+      }
+    ]
+  }
+]

@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
+### Added
+
+- Experimental support for `readOnly` and `writeOnly` keywords. ([@skryukov])
+
+    ```ruby
+    # spec/rails_helper.rb
+    
+    RSpec.configure do |config|
+      # To enable support for readOnly and writeOnly keywords, pass `enforce_access_modes: true` option:
+      config.include Skooma::RSpec[Rails.root.join("docs", "openapi.yml"), enforce_access_modes: true], type: :request
+    end
+    ```
+
 ## [0.3.3] - 2024-10-14
 
 ### Fixed
