@@ -16,6 +16,9 @@ module Skooma
             Skooma::Keywords::OAS31::Dialect::OneOf,
             Skooma::Keywords::OAS31::Dialect::Discriminator,
             Skooma::Keywords::OAS31::Dialect::Xml,
+            Skooma::Keywords::OAS31::Dialect::Properties,
+            Skooma::Keywords::OAS31::Dialect::AdditionalProperties,
+            Skooma::Keywords::OAS31::Dialect::Required,
             Skooma::Keywords::OAS31::Dialect::ExternalDocs,
             Skooma::Keywords::OAS31::Dialect::Example
           )

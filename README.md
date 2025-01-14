@@ -128,6 +128,10 @@ ActionDispatch::IntegrationTest.include Skooma::Minitest[path_to_openapi, path_p
 # To enable coverage, pass `coverage: :report` option,
 # and to raise an error when an operation is not covered, pass `coverage: :strict` option:
 ActionDispatch::IntegrationTest.include Skooma::Minitest[path_to_openapi, coverage: :report], type: :request
+
+# EXPERIMENTAL
+# To enable support for readOnly and writeOnly keywords, pass `enforce_access_modes: true` option:
+ActionDispatch::IntegrationTest.include Skooma::Minitest[path_to_openapi, enforce_access_modes: true], type: :request
 ```
 
 #### Validate OpenAPI document
