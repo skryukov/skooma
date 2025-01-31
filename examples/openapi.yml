@@ -46,9 +46,11 @@ paths:
   /things/{id}:
     get:
       parameters:
-        id:
+        - name: id
           in: path
-          pattern: "(/d)+"
+          schema:
+            type: string
+            pattern: "(/d)+"
       responses:
         "200":
           description: OK
@@ -56,12 +58,14 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Item"
-  /things/first5{format}:
+  /things/first5/{format}:
     get:
       parameters:
-        format:
-          in: path
-          pattern: "(\.(xml|json))?"
+      - name: format
+        in: path
+        schema:
+          type: string
+          pattern: "(.(xml|json))?"
       responses:
         "200":
           description: OK
