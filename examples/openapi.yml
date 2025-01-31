@@ -33,7 +33,43 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-
+  /things:
+    get:
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/Item"
+  /things/{id}:
+    get:
+      parameters:
+        id:
+          in: path
+          pattern: "(/d)+"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+  /things/first5{format}:
+    get:
+      parameters:
+        format:
+          in: path
+          pattern: "(\.(xml|json))?"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/Item"
 components:
   schemas:
     Item:

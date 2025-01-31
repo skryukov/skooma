@@ -44,13 +44,11 @@ module TestApp
       end
 
       get /\/things([\d]+)/ do |id|
-        puts "not recognized"
         content_type :json
         JSON.generate(things[id.to_i])
       end
 
-      get "/things/first5" do
-        puts "recognized"
+      get "/things/first5:format" do
         content_type :json
         JSON.generate(things[0..4])
       end
