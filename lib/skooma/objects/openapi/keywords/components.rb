@@ -9,12 +9,6 @@ module Skooma
           self.value_schema = :schema
           self.schema_value_class = Objects::Components
 
-          # def initialize(parent_schema, value)
-          #   super
-          #   puts "components"
-          #   puts parent_schema
-          # end
-
           def each_schema(&block)
             return super unless json.type == "object"
 

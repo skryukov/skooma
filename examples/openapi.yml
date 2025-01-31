@@ -50,7 +50,7 @@ paths:
           in: path
           schema:
             type: string
-            pattern: "(/d)+"
+            pattern: '\d+'
       responses:
         "200":
           description: OK
@@ -58,14 +58,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Item"
-  /things/first5/{format}:
+  /things/first5{format}:
     get:
       parameters:
       - name: format
         in: path
+        required: false
         schema:
           type: string
-          pattern: "(.(xml|json))?"
+          pattern: '.(xml|json)'
       responses:
         "200":
           description: OK

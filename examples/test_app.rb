@@ -43,12 +43,13 @@ module TestApp
         JSON.generate(things)
       end
 
-      get /\/things([\d]+)/ do |id|
+      get /\/things\/(\d+)/ do |id|
         content_type :json
         JSON.generate(things[id.to_i])
       end
 
-      get "/things/first5:format" do
+      get /\/things\/first5((\.(xml|json))?)/ do
+        format = params['captures']
         content_type :json
         JSON.generate(things[0..4])
       end

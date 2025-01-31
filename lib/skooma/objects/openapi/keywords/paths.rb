@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'pp'
+
 module Skooma
   module Objects
     class OpenAPI
@@ -14,7 +16,6 @@ module Skooma
           def initialize(parent_schema, value)
             super
             @parent_schema = parent_schema
-            puts "ho hey"
           end
 
           def evaluate(instance, result)
@@ -40,11 +41,20 @@ module Skooma
 
           def regexp_map
             @regexp_map ||= json.filter_map do |path, subschema|
-              puts "hey ho"
               next unless path.include?("{") && path.include?("}")
               # now you have @parent_schema where everything is initialized
-              puts @parent_schema
-              path_regex = path.gsub(ROUTE_REGEXP, "(?<\\1>[^/?#]+)")
+              # puts pretty(@parent_schema)
+              # puts pretty(subschema)
+              pattern_hash = create_hash_of_patterns(subschema)
+
+              path_regex = path.gsub(ROUTE_REGEXP) do |match|
+                param = match[1..-2]
+                if pattern_hash.key?(param)
+                  "(?<#{param}>#{pattern_hash[param]})"
+                else
+                  "(?<#{param}>[^/?#]+)"
+                end
+              end
               path_regex = Regexp.new("\\A#{path_regex}\\z")
 
               [path, path_regex, subschema]
@@ -52,7 +62,6 @@ module Skooma
           end
 
           def find_route(instance_path)
-            regexp_map
             instance_path = instance_path.delete_prefix(json.root.path_prefix)
             return [instance_path, {}, json[instance_path]] if json.key?(instance_path)
             regexp_map.reduce(nil) do |result, (path, path_regex, subschema)|
@@ -64,6 +73,36 @@ module Skooma
 
               [path, match.named_captures, subschema]
             end
+          end
+
+          def create_hash_of_patterns(subschema)
+            output = {}
+            for method in subschema.keys do
+              for parameter in subschema[method]["parameters"] do
+                if parameter.key?("in") && parameter["in"] == "path"
+                  pattern = "[^/?#]+"
+                  if parameter.key?("pattern")
+                    pattern = parameter["pattern"]
+                  else
+                    if parameter.key?("schema") && parameter["schema"].key?("pattern")
+                      pattern = parameter["schema"]["pattern"]
+                    end
+                  end
+                  if parameter.key?("required") && !parameter["require"]
+                    pattern = "(#{pattern})?"
+                  end
+                  #TODO: work with other format
+                  if parameter.key?("name")
+                    output[parameter["name"].to_s] = pattern
+                  end
+                end
+              end
+            end
+            output
+          end
+
+          def pretty(result)
+            PP.pp(result, +"")
           end
         end
       end
