@@ -13,14 +13,8 @@ module Skooma
 
           def initialize(parent_schema, value)
             super
-            @regexp_map = json.filter_map do |path, subschema|
-              next unless path.include?("{") && path.include?("}")
-
-              path_regex = path.gsub(ROUTE_REGEXP, "(?<\\1>[^/?#]+)")
-              path_regex = Regexp.new("\\A#{path_regex}\\z")
-
-              [path, path_regex, subschema]
-            end
+            @parent_schema = parent_schema
+            puts "ho hey"
           end
 
           def evaluate(instance, result)
@@ -44,11 +38,24 @@ module Skooma
 
           private
 
+          def regexp_map
+            @regexp_map ||= json.filter_map do |path, subschema|
+              puts "hey ho"
+              next unless path.include?("{") && path.include?("}")
+              # now you have @parent_schema where everything is initialized
+              puts @parent_schema
+              path_regex = path.gsub(ROUTE_REGEXP, "(?<\\1>[^/?#]+)")
+              path_regex = Regexp.new("\\A#{path_regex}\\z")
+
+              [path, path_regex, subschema]
+            end
+          end
+
           def find_route(instance_path)
+            regexp_map
             instance_path = instance_path.delete_prefix(json.root.path_prefix)
             return [instance_path, {}, json[instance_path]] if json.key?(instance_path)
-
-            @regexp_map.reduce(nil) do |result, (path, path_regex, subschema)|
+            regexp_map.reduce(nil) do |result, (path, path_regex, subschema)|
               next result unless path.include?("{") && path.include?("}")
 
               match = instance_path.match(path_regex)

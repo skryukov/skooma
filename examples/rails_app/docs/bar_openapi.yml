@@ -43,7 +43,8 @@ components:
       properties:
         foo:
           type: string
-          enum: [bar]
+          pattern: "(bar)*"
+          enum: [bar, baz, qux, quux, corge, grault, garply, waldo, fred, plugh, xyzzy, thud]
     Error:
       type: object
       unevaluatedProperties: false

@@ -5,6 +5,21 @@ require "json"
 
 module TestApp
   def self.[](value)
+    things = [
+      {"foo" => "bar"},
+      {"foo" => "baz"},
+      {"foo" => "qux"},
+      {"foo" => "quux"},
+      {"foo" => "corge"},
+      {"foo" => "grault"},
+      {"foo" => "garply"},
+      {"foo" => "waldo"},
+      {"foo" => "fred"},
+      {"foo" => "plugh"},
+      {"foo" => "xyzzy"},
+      {"foo" => "thud"},
+    ]
+
     Sinatra.new do
       get "/" do
         content_type :json
@@ -21,6 +36,11 @@ module TestApp
           status 400
           JSON.generate({"message" => "foo must be #{value}"})
         end
+      end
+
+      get "/things" do
+        content_type :json
+        JSON.generate(things)
       end
     end
   end

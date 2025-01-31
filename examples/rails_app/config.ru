@@ -3,3 +3,4 @@
 require_relative "app"
 
 run Rails.application
+# Rails.application.load_server
