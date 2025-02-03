@@ -85,19 +85,40 @@ module Skooma
 
           def create_hash_of_patterns(subschema)
             output = {}
-            for method in subschema.keys do
-              for parameter in subschema[method]["parameters"] do
-                if get_child(parameter, "in") == "path"
-                  pattern = "[^/?#]+"
-                  new_pattern = get_child(parameter, "pattern")
-                  pattern = new_pattern if new_pattern
-                  new_pattern = get_child(get_child(parameter, "schema"), "pattern")
-                  pattern = new_pattern if new_pattern
-                  output[get_child(parameter, "name").to_s] = pattern
-                end
+            parameters = []
+            parameters = parameters.concat(subschema["parameters"]) if subschema["parameters"]
+            for method in %w[get post put patch delete] do
+              parameters = parameters.concat(subschema[method]["parameters"]) if subschema[method] && subschema[method]["parameters"]
+            end
+            for parameter in parameters do
+              if get_child(parameter, "in") == "path"
+                pattern = "[^/?#]+"
+                new_pattern = get_child(parameter, "pattern")
+                pattern = new_pattern if new_pattern
+                new_pattern = get_child(get_child(parameter, "schema"), "pattern")
+                pattern = new_pattern if new_pattern
+
+                output[get_child(parameter, "name").to_s] = filter_pattern(pattern)
               end
             end
             output
+          end
+
+          def filter_pattern(pattern)
+            to_return = pattern.to_s
+            if to_return.start_with?('^')
+              to_return = to_return[1..-1]
+            end
+            if to_return.start_with?('\A')
+              to_return = to_return[2..-1]
+            end
+            if to_return.end_with?('$')
+              to_return = to_return[0..-2]
+            end
+            if to_return.end_with?('\Z') || to_return.end_with?('\z')
+              to_return = to_return[0..-3]
+            end
+            to_return
           end
         end
       end
