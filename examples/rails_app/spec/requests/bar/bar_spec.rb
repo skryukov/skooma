@@ -1,7 +1,7 @@
 require "rails_helper"
 
 describe "Bar API", :bar_api, type: :request do
-  xdescribe "GET /bar" do
+  describe "GET /bar" do
     subject { get "/bar" }
 
     it { is_expected.to conform_schema(200) }
@@ -12,7 +12,7 @@ describe "Bar API", :bar_api, type: :request do
     end
   end
 
-  xdescribe "POST /bar" do
+  describe "POST /bar" do
     subject { post("/bar", params: body, as: :json) }
 
     let(:body) { {foo: "bar"} }
@@ -26,14 +26,14 @@ describe "Bar API", :bar_api, type: :request do
     end
   end
 
-  xdescribe "GET /things" do
+  describe "GET /things" do
     subject { get("/bar/things") }
 
     it { is_expected.to conform_schema(200) }
   end
 
   describe "GET /things/first5" do
-    xcontext "with .json" do
+    context "with .json" do
       subject { get("/bar/things/first5.json") }
 
       it { is_expected.to conform_schema(200) }
@@ -46,7 +46,7 @@ describe "Bar API", :bar_api, type: :request do
     end
   end
 
-  xdescribe "GET /things/:id" do
+  describe "GET /things/:id" do
     context "with valid params" do
       subject { get("/bar/things/1") }
 

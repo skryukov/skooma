@@ -15,7 +15,6 @@ module Skooma
 
           def initialize(parent_schema, value)
             super
-            @parent_schema = parent_schema
           end
 
           def evaluate(instance, result)
