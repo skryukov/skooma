@@ -71,7 +71,7 @@ paths:
               schema:
                 items:
                   $ref: "#/components/schemas/Item"
-  /things/first5:
+  /items/first5:
     get:
       responses:
         "200":
