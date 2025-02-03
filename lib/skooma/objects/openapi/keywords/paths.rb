@@ -94,10 +94,6 @@ module Skooma
                   pattern = new_pattern if new_pattern
                   new_pattern = get_child(get_child(parameter, "schema"), "pattern")
                   pattern = new_pattern if new_pattern
-                  required = get_child(parameter, "required")
-                  if !required.nil? && !required
-                    pattern = "(#{pattern})?"
-                  end
                   output[get_child(parameter, "name").to_s] = pattern
                 end
               end
