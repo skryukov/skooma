@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'pp'
-
 module Skooma
   module Objects
     class OpenAPI
@@ -42,9 +40,7 @@ module Skooma
           def regexp_map
             @regexp_map ||= json.filter_map do |path, subschema|
               next unless path.include?("{") && path.include?("}")
-              # now you have @parent_schema where everything is initialized
-              # puts pretty(@parent_schema)
-              # puts pretty(subschema)
+
               pattern_hash = create_hash_of_patterns(subschema)
 
               path_regex = path.gsub(ROUTE_REGEXP) do |match|
@@ -103,10 +99,6 @@ module Skooma
               end
             end
             output
-          end
-
-          def pretty(result)
-            PP.pp(result, +"")
           end
         end
       end
