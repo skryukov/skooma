@@ -59,10 +59,20 @@ paths:
       parameters:
       - name: format
         in: path
-        required: false
+        required: true
         schema:
           type: string
           pattern: '.(xml|json)'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/Item"
+  /things/first5:
+    get:
       responses:
         "200":
           description: OK
