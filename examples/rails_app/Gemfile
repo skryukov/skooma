@@ -5,7 +5,5 @@ source "https://rubygems.org"
 gem "rails"
 gem "rspec"
 gem "rspec-rails"
-# gem "skooma", (ENV["CI"] == "1") ? {path: File.join(__dir__, "..", "..")} : {}
-gem "skooma", {path: File.join(__dir__, "..", "..")}
+gem "skooma", (ENV["CI"] != "1") ? {path: File.join(__dir__, "..", "..")} : {}
 gem "sinatra"
-gem "puma"

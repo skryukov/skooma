@@ -1,7 +1,7 @@
 require "rails_helper"
 
 describe "Bar API", :bar_api, type: :request do
-  xdescribe "GET /bar" do
+  describe "GET /bar" do
     subject { get "/bar" }
 
     it { is_expected.to conform_schema(200) }
@@ -12,7 +12,7 @@ describe "Bar API", :bar_api, type: :request do
     end
   end
 
-  xdescribe "POST /bar" do
+  describe "POST /bar" do
     subject { post("/bar", params: body, as: :json) }
 
     let(:body) { {foo: "bar"} }
@@ -26,35 +26,35 @@ describe "Bar API", :bar_api, type: :request do
     end
   end
 
-  xdescribe "GET /things" do
-    subject { get("/bar/things") }
+  describe "GET /items" do
+    subject { get("/bar/items") }
 
     it { is_expected.to conform_schema(200) }
   end
 
-  describe "GET /things/first5" do
-    xcontext "with .json" do
-      subject { get("/bar/things/first5.json") }
+  describe "GET /items/first5" do
+    context "with .json" do
+      subject { get("/bar/items/first5.json") }
 
       it { is_expected.to conform_schema(200) }
     end
 
     context "without .json" do
-      subject { get("/bar/things/first5") }
+      subject { get("/bar/items/first5") }
 
       it { is_expected.to conform_schema(200) }
     end
   end
 
-  xdescribe "GET /things/:id" do
+  describe "GET /items/:id" do
     context "with valid params" do
-      subject { get("/bar/things/1") }
+      subject { get("/bar/items/1") }
 
       it { is_expected.to conform_schema(200) }
     end
 
     context "with valid params outside of the range" do
-      subject { get("/bar/things/33") }
+      subject { get("/bar/items/33") }
 
       it { is_expected.to conform_schema(200) }
     end
