@@ -46,11 +46,7 @@ paths:
   /things/{id}:
     get:
       parameters:
-        - name: id
-          in: path
-          schema:
-            type: string
-            pattern: '\d+'
+        - $ref: "#/components/parameters/id"
       responses:
         "200":
           description: OK
@@ -92,3 +88,12 @@ components:
       properties:
         message:
           type: string
+    IntegerString:
+      type: string
+      pattern: '\d+'
+  parameters:
+    id:
+      name: id
+      in: path
+      schema:
+        $ref: "#/components/schemas/IntegerString"

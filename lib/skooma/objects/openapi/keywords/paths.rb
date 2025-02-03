@@ -56,6 +56,7 @@ module Skooma
                 end
               end
               path_regex = Regexp.new("\\A#{path_regex}\\z")
+              puts path_regex
 
               [path, path_regex, subschema]
             end
@@ -75,26 +76,34 @@ module Skooma
             end
           end
 
+          def get_child(parent, child_name)
+            if parent
+              if parent.key?("$ref")
+                parent_to_use = parent.resolve_ref(parent["$ref"])
+              else
+                parent_to_use = parent
+              end
+              if parent_to_use.key?(child_name)
+                parent_to_use[child_name]
+              end
+            end
+          end
+
           def create_hash_of_patterns(subschema)
             output = {}
             for method in subschema.keys do
               for parameter in subschema[method]["parameters"] do
-                if parameter.key?("in") && parameter["in"] == "path"
+                if get_child(parameter, "in") == "path"
                   pattern = "[^/?#]+"
-                  if parameter.key?("pattern")
-                    pattern = parameter["pattern"]
-                  else
-                    if parameter.key?("schema") && parameter["schema"].key?("pattern")
-                      pattern = parameter["schema"]["pattern"]
-                    end
-                  end
-                  if parameter.key?("required") && !parameter["require"]
+                  new_pattern = get_child(parameter, "pattern")
+                  pattern = new_pattern if new_pattern
+                  new_pattern = get_child(get_child(parameter, "schema"), "pattern")
+                  pattern = new_pattern if new_pattern
+                  required = get_child(parameter, "required")
+                  if !required.nil? && !required
                     pattern = "(#{pattern})?"
                   end
-                  #TODO: work with other format
-                  if parameter.key?("name")
-                    output[parameter["name"].to_s] = pattern
-                  end
+                  output[get_child(parameter, "name").to_s] = pattern
                 end
               end
             end
