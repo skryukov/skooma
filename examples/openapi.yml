@@ -33,7 +33,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /things:
+  /items:
     get:
       responses:
         "200":
@@ -43,7 +43,7 @@ paths:
               schema:
                 items:
                   $ref: "#/components/schemas/Item"
-  /things/{id}:
+  /items/{id}:
     get:
       parameters:
         - $ref: "#/components/parameters/id"
@@ -54,7 +54,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Item"
-  /things/first5{format}:
+  /items/first5{format}:
     get:
       parameters:
       - name: format
