@@ -5,9 +5,8 @@ require "json"
 
 module TestApp
   def self.[](value)
-    things = [
-      {"foo" => "bar"},
-      {"foo" => "baz"},
+    items = [
+      {"foo" => value},
       {"foo" => "qux"},
       {"foo" => "quux"},
       {"foo" => "corge"},
@@ -38,20 +37,20 @@ module TestApp
         end
       end
 
-      get "/things" do
+      get "/items" do
         content_type :json
-        JSON.generate(things)
+        JSON.generate(items)
       end
 
-      get /\/things\/(\d+)/ do |id|
+      get /\/items\/(\d+)/ do |id|
         content_type :json
-        JSON.generate(things[id.to_i])
+        JSON.generate(items[id.to_i])
       end
 
-      get /\/things\/first5((\.(xml|json))?)/ do
+      get /\/items\/first5((\.(xml|json))?)/ do
         format = params['captures']
         content_type :json
-        JSON.generate(things[0..4])
+        JSON.generate(items[0..4])
       end
     end
   end
