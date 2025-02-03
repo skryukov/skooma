@@ -62,17 +62,7 @@ paths:
         required: true
         schema:
           type: string
-          pattern: '.(xml|json)'
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                items:
-                  $ref: "#/components/schemas/Item"
-  /items/first5:
-    get:
+          pattern: '(.(xml|json))?'
       responses:
         "200":
           description: OK
