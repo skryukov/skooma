@@ -4,6 +4,9 @@ CONFIGS = {
   default: proc {},
   with_enforce_access_modes: ->(schema) do
     schema.enforce_access_modes = true
+  end,
+  with_use_patterns_for_path_matching: ->(schema) do
+    schema.use_patterns_for_path_matching = true
   end
 }.freeze
 

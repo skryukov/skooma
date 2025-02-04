@@ -17,6 +17,6 @@ RSpec.configure do |config|
 
   # You can use different RSpec filters if you want to test different API descriptions.
   # Check RSpec's config.define_derived_metadata for better UX.
-  config.include Skooma::RSpec[bar_openapi, path_prefix: "/bar", coverage: :strict], :bar_api
-  config.include Skooma::RSpec[baz_openapi, path_prefix: "/baz", coverage: :strict], :baz_api
+  config.include Skooma::RSpec[bar_openapi, path_prefix: "/bar", coverage: :strict, use_patterns_for_path_matching: true], :bar_api
+  config.include Skooma::RSpec[baz_openapi, path_prefix: "/baz", coverage: :report], :baz_api
 end

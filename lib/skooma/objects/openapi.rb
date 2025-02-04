@@ -49,6 +49,16 @@ module Skooma
         @enforce_access_modes
       end
 
+      def use_patterns_for_path_matching=(value)
+        raise ArgumentError, "Use patterns for path matching must be a boolean" unless [true, false].include?(value)
+
+        @use_patterns_for_path_matching = value
+      end
+
+      def use_patterns_for_path_matching?
+        @use_patterns_for_path_matching
+      end
+
       def path_prefix
         @path_prefix || ""
       end

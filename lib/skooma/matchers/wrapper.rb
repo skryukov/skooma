@@ -44,7 +44,7 @@ module Skooma
         end
       end
 
-      def initialize(helper_methods_module, openapi_path, base_uri: "https://skoomarb.dev/", path_prefix: "", enforce_access_modes: false, **params)
+      def initialize(helper_methods_module, openapi_path, base_uri: "https://skoomarb.dev/", path_prefix: "", enforce_access_modes: false, use_patterns_for_path_matching: false, **params)
         super()
 
         registry = create_test_registry
@@ -60,6 +60,8 @@ module Skooma
         @schema.enforce_access_modes = enforce_access_modes
 
         @coverage = Coverage.new(@schema, mode: params[:coverage], format: params[:coverage_format])
+
+        @schema.use_patterns_for_path_matching = use_patterns_for_path_matching
 
         include DefaultHelperMethods
         include helper_methods_module
