@@ -40,7 +40,11 @@ module Skooma
             @regexp_map ||= json.filter_map do |path, subschema|
               next unless path.include?("{") && path.include?("}")
 
-              pattern_hash = create_hash_of_patterns(subschema)
+              if json.root.use_patterns_for_path_matching?
+                pattern_hash = create_hash_of_patterns(subschema)
+              else
+                pattern_hash = {}
+              end
 
               path_regex = path.gsub(ROUTE_REGEXP) do |match|
                 param = match[1..-2]
