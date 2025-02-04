@@ -16,7 +16,7 @@ module TestApp
       {"foo" => "fred"},
       {"foo" => "plugh"},
       {"foo" => "xyzzy"},
-      {"foo" => "thud"},
+      {"foo" => "thud"}
     ]
 
     Sinatra.new do
@@ -42,15 +42,17 @@ module TestApp
         JSON.generate(items)
       end
 
-      get /\/items\/(\d+)/ do |id|
+      get(/\/items\/(\d+)/) do |id|
         content_type :json
         JSON.generate(items[id.to_i])
       end
 
-      get /\/items\/first5((\.(xml|json))?)/ do
-        format = params['captures']
-        content_type :json
-        JSON.generate(items[0..4])
+      get(/\/items\/first5((\.(xml|json))?)/) do
+        format = params["captures"]
+        if format != ".xml"
+          content_type :json
+          JSON.generate(items[0..4])
+        end
       end
     end
   end

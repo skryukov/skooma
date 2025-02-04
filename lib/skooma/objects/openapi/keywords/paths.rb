@@ -40,10 +40,10 @@ module Skooma
             @regexp_map ||= json.filter_map do |path, subschema|
               next unless path.include?("{") && path.include?("}")
 
-              if json.root.use_patterns_for_path_matching?
-                pattern_hash = create_hash_of_patterns(subschema)
+              pattern_hash = if json.root.use_patterns_for_path_matching?
+                create_hash_of_patterns(subschema)
               else
-                pattern_hash = {}
+                {}
               end
 
               path_regex = path.gsub(ROUTE_REGEXP) do |match|
@@ -76,10 +76,10 @@ module Skooma
 
           def get_child(parent, child_name)
             if parent
-              if parent.key?("$ref")
-                parent_to_use = parent.resolve_ref(parent["$ref"])
+              parent_to_use = if parent.key?("$ref")
+                parent.resolve_ref(parent["$ref"])
               else
-                parent_to_use = parent
+                parent
               end
               if parent_to_use.key?(child_name)
                 parent_to_use[child_name]
@@ -91,10 +91,10 @@ module Skooma
             output = {}
             parameters = []
             parameters = parameters.concat(subschema["parameters"]) if subschema["parameters"]
-            for method in %w[get post put patch delete] do
+            %w[get post put patch delete].each do |method|
               parameters = parameters.concat(subschema[method]["parameters"]) if subschema[method] && subschema[method]["parameters"]
             end
-            for parameter in parameters do
+            parameters.each do |parameter|
               if get_child(parameter, "in") == "path"
                 pattern = "[^/?#]+"
                 new_pattern = get_child(parameter, "pattern")
@@ -110,16 +110,16 @@ module Skooma
 
           def filter_pattern(pattern)
             to_return = pattern.to_s
-            if to_return.start_with?('^')
-              to_return = to_return[1..-1]
+            if to_return.start_with?("^")
+              to_return = to_return[1..]
             end
             if to_return.start_with?('\A')
-              to_return = to_return[2..-1]
+              to_return = to_return[2..]
             end
-            if to_return.end_with?('$')
+            if to_return.end_with?("$")
               to_return = to_return[0..-2]
             end
-            if to_return.end_with?('\Z') || to_return.end_with?('\z')
+            if to_return.end_with?('\Z', '\z')
               to_return = to_return[0..-3]
             end
             to_return
