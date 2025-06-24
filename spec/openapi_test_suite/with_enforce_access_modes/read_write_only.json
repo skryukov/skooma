@@ -48,7 +48,12 @@
               "name",
               "password"
             ],
-            "additionalProperties": false,
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
             "properties": {
               "id": {
                 "$ref": "#/components/schemas/Id"
@@ -82,7 +87,7 @@
             "headers": {
               "Content-Type": "application/json"
             },
-            "body": "{\"id\": 1, \"name\": \"John Doe\"}"
+            "body": "{\"id\": 1, \"name\": \"John Doe\", \"extra\": [\"test\"]}"
           }
         },
         "valid": true

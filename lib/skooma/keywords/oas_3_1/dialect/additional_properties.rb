@@ -22,7 +22,7 @@ module Skooma
               properties_result = result.sibling(instance, "properties")
               instance.each_key do |name|
                 res = properties_result&.children&.[](instance[name]&.path)&.[]name
-                forbidden << name.tap { puts "adding #{name}" } if annotation_exists?(res, key: only_key)
+                forbidden << name.tap { puts "adding #{name}" } if res && annotation_exists?(res, key: only_key)
               end
             end
 
