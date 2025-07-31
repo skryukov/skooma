@@ -26,7 +26,7 @@ module Skooma
       end
     end
 
-    def self.new(schema, mode: nil, format: nil, storage: CoverageStore.new)
+    def self.new(schema, mode: nil, format: nil, storage: nil)
       case mode
       when nil, false
         NoopCoverage.new
@@ -44,7 +44,7 @@ module Skooma
       @schema = schema
       @mode = mode
       @format = format || SimpleReport
-      @storage = storage
+      @storage = storage || CoverageStore.new
 
       stored_data = @storage.load_data
       @defined_paths = stored_data[:defined_paths]

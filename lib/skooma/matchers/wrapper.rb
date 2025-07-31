@@ -59,7 +59,10 @@ module Skooma
         @schema.path_prefix = path_prefix
         @schema.enforce_access_modes = enforce_access_modes
 
-        @coverage = Coverage.new(@schema, mode: params[:coverage], format: params[:coverage_format])
+        storage = Skooma::CoverageStore.new(
+          file_path: File.join(Dir.pwd, "tmp", "skooma_coverage_#{Digest::SHA256.hexdigest(source_uri)[..8]}.json")
+        )
+        @coverage = Coverage.new(@schema, mode: params[:coverage], format: params[:coverage_format], storage:)
 
         include DefaultHelperMethods
         include helper_methods_module
