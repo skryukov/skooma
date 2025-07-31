@@ -41,6 +41,59 @@
               }
             }
           }
+        },
+        "/users": {
+          "get": {
+            "responses": {
+              "200": {
+                "description": "List of users",
+                "content": {
+                  "application/vnd.api+json": {
+                    "schema": {
+                      "type": "object",
+                      "required": ["data"],
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": ["type", "id", "attributes"],
+                            "properties": {
+                              "type": {
+                                "type": "string",
+                                "enum": ["users"]
+                              },
+                              "id": {
+                                "type": "string"
+                              },
+                              "attributes": {
+                                "type": "object",
+                                "required": ["name", "email"],
+                                "properties": {
+                                  "name": {
+                                    "type": "string"
+                                  },
+                                  "email": {
+                                    "type": "string",
+                                    "format": "email"
+                                  },
+                                  "age": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 120
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -104,6 +157,26 @@
           }
         },
         "valid": false
+      },
+      {
+        "description": "valid users response",
+        "data": {
+          "method": "get",
+          "path": "/users",
+          "request": {
+            "headers": {
+              "Content-Type": "application/vnd.api+json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/vnd.api+json"
+            },
+            "body": "{\"data\":[{\"type\":\"users\",\"id\":\"1\",\"attributes\":{\"name\":\"John Doe\",\"email\":\"john@example.com\",\"age\":30}},{\"type\":\"users\",\"id\":\"2\",\"attributes\":{\"name\":\"Jane Smith\",\"email\":\"jane@example.com\",\"age\":25}}]}"
+          }
+        },
+        "valid": true
       }
     ]
   }

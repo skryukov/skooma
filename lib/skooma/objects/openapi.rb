@@ -39,6 +39,16 @@ module Skooma
         @path_prefix = @path_prefix.delete_suffix("/") if @path_prefix.end_with?("/")
       end
 
+      def enforce_access_modes=(value)
+        raise ArgumentError, "Enforce access modes must be a boolean" unless [true, false].include?(value)
+
+        @enforce_access_modes = value
+      end
+
+      def enforce_access_modes?
+        @enforce_access_modes
+      end
+
       def path_prefix
         @path_prefix || ""
       end

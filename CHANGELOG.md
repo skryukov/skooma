@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
+## [0.3.4] - 2025-01-14
+
+### Added
+
+- Experimental support for `readOnly` and `writeOnly` keywords. ([@skryukov])
+
+    ```ruby
+    # spec/rails_helper.rb
+    
+    RSpec.configure do |config|
+      # To enable support for readOnly and writeOnly keywords, pass `enforce_access_modes: true` option:
+      config.include Skooma::RSpec[Rails.root.join("docs", "openapi.yml"), enforce_access_modes: true], type: :request
+    end
+    ```
+- Support fallback parsers for vendor-specific media types. ([@pvcarrera], [@skryukov])
+
 ## [0.3.3] - 2024-10-14
 
 ### Fixed
@@ -125,10 +141,12 @@ and this project adheres to [Semantic Versioning].
 - Initial implementation. ([@skryukov])
 
 [@barnaclebarnes]: https://github.com/barnaclebarnes
+[@pvcarrera]: https://github.com/pvcarrera
 [@skryukov]: https://github.com/skryukov
 [@ursm]: https://github.com/ursm
 
-[Unreleased]: https://github.com/skryukov/skooma/compare/v0.3.3...HEAD
+[Unreleased]: https://github.com/skryukov/skooma/compare/v0.3.4...HEAD
+[0.3.4]: https://github.com/skryukov/skooma/compare/v0.3.3...v0.3.4
 [0.3.3]: https://github.com/skryukov/skooma/compare/v0.3.2...v0.3.3
 [0.3.2]: https://github.com/skryukov/skooma/compare/v0.3.1...v0.3.2
 [0.3.1]: https://github.com/skryukov/skooma/compare/v0.3.0...v0.3.1

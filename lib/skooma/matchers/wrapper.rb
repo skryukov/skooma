@@ -44,7 +44,7 @@ module Skooma
         end
       end
 
-      def initialize(helper_methods_module, openapi_path, base_uri: "https://skoomarb.dev/", path_prefix: "", **params)
+      def initialize(helper_methods_module, openapi_path, base_uri: "https://skoomarb.dev/", path_prefix: "", enforce_access_modes: false, **params)
         super()
 
         registry = create_test_registry
@@ -57,6 +57,7 @@ module Skooma
         )
         @schema = registry.schema(URI.parse("#{source_uri}#{pathname.basename}"), schema_class: Skooma::Objects::OpenAPI)
         @schema.path_prefix = path_prefix
+        @schema.enforce_access_modes = enforce_access_modes
 
         @coverage = Coverage.new(@schema, mode: params[:coverage], format: params[:coverage_format])
 
