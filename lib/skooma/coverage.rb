@@ -83,6 +83,7 @@ module Skooma
       stored_data = storage.load_data
       self.covered_paths = stored_data[:covered_paths]
       format.new(self).report
+      storage.clear
       exit 1 if mode == :strict && uncovered_paths.any?
     end
 

@@ -29,6 +29,10 @@ module Skooma
       end
     end
 
+    def clear
+      File.delete(file_path) if File.exist?(file_path)
+    end
+
     private
 
     def ensure_file_exists

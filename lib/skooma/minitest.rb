@@ -41,7 +41,6 @@ module Skooma
 
       ::Minitest.after_run do
         coverage.report
-        File.delete(coverage.storage.file_path) if coverage.respond_to?(:storage) && File.exist?(coverage.storage.file_path)
       end
     end
   end
