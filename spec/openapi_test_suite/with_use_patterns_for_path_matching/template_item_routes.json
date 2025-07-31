@@ -1,0 +1,145 @@
+[
+  {
+    "description": "Template item routes",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {
+        "title": "api",
+        "version": "1.0.0"
+      },
+      "paths": {
+        "/items/{id}": {
+          "get": {
+            "parameters": [
+              {
+                "name": "id",
+                "in": "path",
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "pattern": "[0-9]+"
+                }
+              }
+            ],
+            "responses": {
+              "201": {
+                "$ref": "#/components/responses/Foo"
+              }
+            }
+          }
+        },
+        "/items/first5": {
+          "get": {
+            "responses": {
+              "202": {
+                "$ref": "#/components/responses/Foo"
+              }
+            }
+          }
+        },
+        "/items/first5{format}": {
+          "get": {
+            "parameters": [
+              {
+                "name": "format",
+                "in": "path",
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "pattern": ".(xml|json)"
+                }
+              }
+            ],
+            "responses": {
+              "202": {
+                "$ref": "#/components/responses/Foo"
+              }
+            }
+          }
+        }
+      },
+      "components": {
+        "responses": {
+          "Foo": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "unevaluatedProperties": false,
+                  "properties": {
+                    "foo": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "simple route",
+        "data": {
+          "method": "get",
+          "path": "/items/1",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 201,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"foo\": \"bar\"}"
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "first5 route",
+        "data": {
+          "method": "get",
+          "path": "/items/first5",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 202,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"foo\": \"bar\"}"
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "json route",
+        "data": {
+          "method": "get",
+          "path": "/items/first5.json",
+          "request": {
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 202,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\"foo\": \"bar\"}"
+          }
+        },
+        "valid": true
+      }
+    ]
+  }
+]

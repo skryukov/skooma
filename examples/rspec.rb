@@ -10,7 +10,7 @@ require "skooma"
 
 RSpec.configure do |config|
   path_to_openapi = File.join(__dir__, "openapi.yml")
-  config.include Skooma::RSpec[path_to_openapi, coverage: :strict], type: :request
+  config.include Skooma::RSpec[path_to_openapi, coverage: :strict, use_patterns_for_path_matching: true], type: :request
 
   config.include Rack::Test::Methods, type: :request
 end
@@ -44,5 +44,23 @@ describe TestApp, type: :request do
 
       it { is_expected.to conform_response_schema(400) }
     end
+  end
+
+  describe "GET /items" do
+    subject { get "/items" }
+
+    it { is_expected.to conform_schema(200) }
+  end
+
+  describe "GET /items/{id}" do
+    subject { get "/items/1" }
+
+    it { is_expected.to conform_schema(200) }
+  end
+
+  describe "GET /items/first5.json" do
+    subject { get "/items/first5.json" }
+
+    it { is_expected.to conform_schema(200) }
   end
 end

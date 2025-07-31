@@ -33,7 +33,44 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-
+  /items:
+    get:
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/Item"
+  /items/{id}:
+    get:
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+  /items/first5{format}:
+    get:
+      parameters:
+      - name: format
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: '(.(xml|json))?'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/Item"
 components:
   schemas:
     Item:
@@ -43,7 +80,7 @@ components:
       properties:
         foo:
           type: string
-          enum: [bar]
+          enum: [bar, baz, qux, quux, corge, grault, garply, waldo, fred, plugh, xyzzy, thud]
     Error:
       type: object
       unevaluatedProperties: false
@@ -51,3 +88,13 @@ components:
       properties:
         message:
           type: string
+    IntegerString:
+      type: string
+      pattern: '\d+'
+  parameters:
+    id:
+      name: id
+      in: path
+      required: true
+      schema:
+        $ref: "#/components/schemas/IntegerString"
