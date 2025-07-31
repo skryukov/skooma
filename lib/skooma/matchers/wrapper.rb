@@ -60,7 +60,7 @@ module Skooma
         @schema.enforce_access_modes = enforce_access_modes
 
         storage = Skooma::CoverageStore.new(
-          file_path: File.join(Dir.pwd, "tmp", "skooma_coverage_#{Digest::SHA256.hexdigest(source_uri)[..8]}.json")
+          file_path: File.join(Dir.pwd, "tmp", "skooma_coverage_#{Digest::SHA256.hexdigest(source_uri)[0..8]}.json")
         )
         @coverage = Coverage.new(@schema, mode: params[:coverage], format: params[:coverage_format], storage:)
 
