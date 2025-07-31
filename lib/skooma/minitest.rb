@@ -39,7 +39,9 @@ module Skooma
     def initialize(openapi_path, **params)
       super(HelperMethods, openapi_path, **params)
 
-      ::Minitest.after_run { coverage.report }
+      ::Minitest.after_run do
+        coverage.report
+      end
     end
   end
 end

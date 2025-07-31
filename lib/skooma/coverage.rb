@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Skooma
   class NoopCoverage
     def track_request(*)
@@ -24,7 +26,7 @@ module Skooma
       end
     end
 
-    def self.new(schema, mode: nil, format: nil)
+    def self.new(schema, mode: nil, format: nil, storage: nil)
       case mode
       when nil, false
         NoopCoverage.new
@@ -35,14 +37,23 @@ module Skooma
       end
     end
 
-    attr_reader :mode, :format, :defined_paths, :covered_paths, :schema
+    attr_reader :mode, :format, :defined_paths, :storage, :schema
+    attr_accessor :covered_paths
 
-    def initialize(schema, mode:, format:)
+    def initialize(schema, mode:, format:, storage:)
       @schema = schema
       @mode = mode
       @format = format || SimpleReport
-      @defined_paths = find_defined_paths(schema)
-      @covered_paths = Set.new
+      @storage = storage || CoverageStore.new
+
+      stored_data = @storage.load_data
+      @defined_paths = stored_data[:defined_paths]
+      @covered_paths = stored_data[:covered_paths]
+
+      if @defined_paths.empty?
+        @defined_paths = find_defined_paths(schema)
+        @storage.save_data(@defined_paths, @covered_paths)
+      end
     end
 
     def track_request(result)
@@ -57,6 +68,7 @@ module Skooma
         end
       end
       covered_paths << operation
+      storage.save_data(Set.new, Set.new([operation]))
     end
 
     def uncovered_paths
@@ -68,7 +80,10 @@ module Skooma
     end
 
     def report
+      stored_data = storage.load_data
+      self.covered_paths = stored_data[:covered_paths]
       format.new(self).report
+      storage.clear
       exit 1 if mode == :strict && uncovered_paths.any?
     end
 
