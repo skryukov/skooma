@@ -132,6 +132,9 @@ ActionDispatch::IntegrationTest.include Skooma::Minitest[path_to_openapi, covera
 # EXPERIMENTAL
 # To enable support for readOnly and writeOnly keywords, pass `enforce_access_modes: true` option:
 ActionDispatch::IntegrationTest.include Skooma::Minitest[path_to_openapi, enforce_access_modes: true], type: :request
+
+# To enable custom regex patterns for path parameters, pass `use_patterns_for_path_matching: true` option.
+ActionDispatch::IntegrationTest.include Skooma::Minitest[path_to_openapi, use_patterns_for_path_matching: true], type: :request
 ```
 
 #### Validate OpenAPI document

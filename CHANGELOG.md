@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
+## [0.3.5] - 2025-07-31
+
+### Fixed
+
+- Fix the Enforce Access mode with additional properties. ([@aburgel])
+- Introduce coverage storage to fix Minitest parallel workers reports. ([@skarlcf])
+- Introduce `use_patterns_for_path_matching` option to allow using `path` patterns for path matching. ([@jandouwebeekman])
+
+    ```ruby
+    # spec/rails_helper.rb
+
+    RSpec.configure do |config|
+      # To enable path patterns, pass `use_patterns_for_path_matching: true` option:
+      config.include Skooma::RSpec[Rails.root.join("docs", "openapi.yml"), use_patterns_for_path_matching: true], type: :request
+    end
+    ```
+
 ## [0.3.4] - 2025-01-14
 
 ### Added
@@ -140,12 +157,16 @@ and this project adheres to [Semantic Versioning].
 
 - Initial implementation. ([@skryukov])
 
+[@aburgel]: https://github.com/aburgel
 [@barnaclebarnes]: https://github.com/barnaclebarnes
+[@jandouwebeekman]: https://github.com/jandouwebeekman
 [@pvcarrera]: https://github.com/pvcarrera
+[@skarlcf]: https://github.com/skarlcf
 [@skryukov]: https://github.com/skryukov
 [@ursm]: https://github.com/ursm
 
-[Unreleased]: https://github.com/skryukov/skooma/compare/v0.3.4...HEAD
+[Unreleased]: https://github.com/skryukov/skooma/compare/v0.3.5...HEAD
+[0.3.5]: https://github.com/skryukov/skooma/compare/v0.3.4...v0.3.5
 [0.3.4]: https://github.com/skryukov/skooma/compare/v0.3.3...v0.3.4
 [0.3.3]: https://github.com/skryukov/skooma/compare/v0.3.2...v0.3.3
 [0.3.2]: https://github.com/skryukov/skooma/compare/v0.3.1...v0.3.2
