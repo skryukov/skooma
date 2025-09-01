@@ -9,12 +9,12 @@ module Skooma
         "schemas" => JSONSkooma::JSONSchema,
         "responses" => Response,
         "parameters" => Parameter,
-        # "examples" => Example,
+        "examples" => JSONSkooma::JSONNode,
         "requestBodies" => RequestBody,
         "headers" => Header,
         "securitySchemes" => JSONSkooma::JSONNode,
         "links" => JSONSkooma::JSONNode,
-        # "callbacks" => Callback,
+        "callbacks" => JSONSkooma::JSONNode,
         "pathItems" => PathItem
       }
 
