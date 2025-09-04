@@ -1,0 +1,48 @@
+[
+  {
+    "description": "OAuth security schemes",
+    "schema": {
+      "openapi": "3.1.1",
+      "info": {
+        "title": "api",
+        "version": "1.0.0"
+      },
+      "paths": {
+        "/": {
+          "get": {
+            "security": [{ "doorkeeperOauth": ["read"] }]
+          }
+        }
+      },
+      "components": {
+        "securitySchemes": {
+          "doorkeeperOauth": {
+            "type": "oauth2",
+            "flows": {
+              "authorizationCode": {
+                "authorizationUrl": "/oauth/authorize",
+                "tokenUrl": "/oauth/token",
+                "refreshUrl": "/oauth/token",
+                "scopes": {
+                  "read": "read",
+                  "write": "write"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "OAuth security schemes",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "security": [{ "doorkeeperOauth": ["read"] }]
+        },
+        "valid": true
+      }
+    ]
+  }
+]
