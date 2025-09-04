@@ -12,7 +12,12 @@ module Skooma
               raise Error, "Only OpenAPI version 3.1.x is supported, got #{value}"
             end
 
-            parent_schema.metaschema_uri = "https://spec.openapis.org/oas/3.1/schema-base/2022-10-07"
+            parent_schema.metaschema_uri = if value.to_s.start_with? "3.1.0"
+              "https://spec.openapis.org/oas/3.1/schema-base/2022-10-07"
+            else
+              "https://spec.openapis.org/oas/3.1/schema-base/2025-02-13"
+            end
+
             parent_schema.json_schema_dialect_uri = "https://spec.openapis.org/oas/3.1/dialect/base"
 
             super
