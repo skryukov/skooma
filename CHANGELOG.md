@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
+## [0.3.6] - 2025-09-04
+
+### Added
+
+- Add OpenAPI 3.1.1 schemas to enable schema validation. ([@Envek])
+
+### Fixed
+
+- Fix examples and callbacks support in Components. ([@goodtouch])
+
 ## [0.3.5] - 2025-07-31
 
 ### Fixed
@@ -159,13 +169,16 @@ and this project adheres to [Semantic Versioning].
 
 [@aburgel]: https://github.com/aburgel
 [@barnaclebarnes]: https://github.com/barnaclebarnes
+[@Envek]: https://github.com/Envek
+[@goodtouch]: https://github.com/goodtouch
 [@jandouwebeekman]: https://github.com/jandouwebeekman
 [@pvcarrera]: https://github.com/pvcarrera
 [@skarlcf]: https://github.com/skarlcf
 [@skryukov]: https://github.com/skryukov
 [@ursm]: https://github.com/ursm
 
-[Unreleased]: https://github.com/skryukov/skooma/compare/v0.3.5...HEAD
+[Unreleased]: https://github.com/skryukov/skooma/compare/v0.3.6...HEAD
+[0.3.6]: https://github.com/skryukov/skooma/compare/v0.3.5...v0.3.6
 [0.3.5]: https://github.com/skryukov/skooma/compare/v0.3.4...v0.3.5
 [0.3.4]: https://github.com/skryukov/skooma/compare/v0.3.3...v0.3.4
 [0.3.3]: https://github.com/skryukov/skooma/compare/v0.3.2...v0.3.3
