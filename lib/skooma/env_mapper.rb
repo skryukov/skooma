@@ -40,6 +40,7 @@ module Skooma
         status, headers, body = response.to_a
         full_body = +""
         body.each { |chunk| full_body << chunk }
+
         {
           "status" => status,
           "headers" => headers.to_h,

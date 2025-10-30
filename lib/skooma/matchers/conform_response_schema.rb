@@ -5,7 +5,17 @@ module Skooma
     class ConformResponseSchema < ConformRequestSchema
       def initialize(skooma, mapped_response, expected)
         super(skooma, mapped_response)
+
         @expected = expected
+
+        case expected
+        when Symbol
+          @expected_code = Rack::Utils::SYMBOL_TO_STATUS_CODE.fetch(expected)
+        when Integer
+          @expected_code = expected
+        else
+          raise ArgumentError, "Expected symbol or number, got expected=#{expected.inspect}"
+        end
       end
 
       def description
