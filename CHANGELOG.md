@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
+## [0.3.7] - 2025-10-30
+
+### Added
+
+- Add support for symbolic response codes. ([@alexkalderimis])
+- Add OpenAPI 3.1.2 & 3.2.0 schemas to enable schema validation. ([@skryukov])
+
 ## [0.3.6] - 2025-09-04
 
 ### Added
@@ -168,6 +175,7 @@ and this project adheres to [Semantic Versioning].
 - Initial implementation. ([@skryukov])
 
 [@aburgel]: https://github.com/aburgel
+[@alexkalderimis]: https://github.com/alexkalderimis
 [@barnaclebarnes]: https://github.com/barnaclebarnes
 [@Envek]: https://github.com/Envek
 [@goodtouch]: https://github.com/goodtouch
@@ -177,7 +185,8 @@ and this project adheres to [Semantic Versioning].
 [@skryukov]: https://github.com/skryukov
 [@ursm]: https://github.com/ursm
 
-[Unreleased]: https://github.com/skryukov/skooma/compare/v0.3.6...HEAD
+[Unreleased]: https://github.com/skryukov/skooma/compare/v0.3.7...HEAD
+[0.3.7]: https://github.com/skryukov/skooma/compare/v0.3.6...v0.3.7
 [0.3.6]: https://github.com/skryukov/skooma/compare/v0.3.5...v0.3.6
 [0.3.5]: https://github.com/skryukov/skooma/compare/v0.3.4...v0.3.5
 [0.3.4]: https://github.com/skryukov/skooma/compare/v0.3.3...v0.3.4
