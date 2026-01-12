@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "minitest/unit"
+require "minitest"
 
 module Skooma
   # Minitest helpers for OpenAPI schema validation
