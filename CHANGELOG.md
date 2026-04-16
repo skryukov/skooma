@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
+## [0.3.8] - 2026-04-16
+
+### Fixed
+
+- Minitest 6 compatibility ([@visini])
+
 ## [0.3.7] - 2025-10-31
 
 ### Added
@@ -184,8 +190,10 @@ and this project adheres to [Semantic Versioning].
 [@skarlcf]: https://github.com/skarlcf
 [@skryukov]: https://github.com/skryukov
 [@ursm]: https://github.com/ursm
+[@visini]: https://github.com/visini
 
-[Unreleased]: https://github.com/skryukov/skooma/compare/v0.3.7...HEAD
+[Unreleased]: https://github.com/skryukov/skooma/compare/v0.3.8...HEAD
+[0.3.8]: https://github.com/skryukov/skooma/compare/v0.3.7...v0.3.8
 [0.3.7]: https://github.com/skryukov/skooma/compare/v0.3.6...v0.3.7
 [0.3.6]: https://github.com/skryukov/skooma/compare/v0.3.5...v0.3.6
 [0.3.5]: https://github.com/skryukov/skooma/compare/v0.3.4...v0.3.5
