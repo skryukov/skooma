@@ -18,11 +18,11 @@ jobs:
     runs-on: ubuntu-latest
     name: Linter
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.3"
+          ruby-version: "4.0"
           bundler-cache: true
       - name: Run StandardRB
         run: bundle exec standardrb
@@ -34,6 +34,7 @@ jobs:
       fail-fast: false
       matrix:
         ruby:
+          - "4.0"
           - "3.4"
           - "3.3"
           - "3.2"
@@ -42,7 +43,7 @@ jobs:
           - "2.7"
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -50,7 +51,7 @@ jobs:
           bundler-cache: true
 
       - name: Cache dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v5
         with:
           path: |
             vendor/bundle
