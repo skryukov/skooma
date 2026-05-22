@@ -1,0 +1,106 @@
+[
+  {
+    "description": "Nested ref schemas do not bubble readOnly/writeOnly up to enclosing additionalProperties",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {
+        "title": "api",
+        "version": "1.0.0"
+      },
+      "paths": {
+        "/orders": {
+          "post": {
+            "requestBody": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["order"],
+                    "properties": {
+                      "order": {"$ref": "#/components/schemas/Order"}
+                    }
+                  }
+                }
+              }
+            },
+            "responses": {
+              "201": {
+                "description": "Created",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": ["order"],
+                      "properties": {
+                        "order": {"$ref": "#/components/schemas/Order"}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "components": {
+        "schemas": {
+          "Order": {
+            "type": "object",
+            "required": ["name"],
+            "properties": {
+              "id": {
+                "type": "integer",
+                "readOnly": true
+              },
+              "name": {
+                "type": "string"
+              },
+              "secret": {
+                "type": "string",
+                "writeOnly": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "request with nested readOnly field does not falsely flag the wrapping property as additionalProperty",
+        "data": {
+          "method": "post",
+          "path": "/orders",
+          "request": {
+            "headers": {"Content-Type": "application/json"},
+            "body": "{\"order\": {\"id\": 1, \"name\": \"Widget\"}}"
+          },
+          "response": {
+            "status": 201,
+            "headers": {"Content-Type": "application/json"},
+            "body": "{\"order\": {\"id\": 1, \"name\": \"Widget\"}}"
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "response with nested writeOnly field does not falsely flag the wrapping property as additionalProperty",
+        "data": {
+          "method": "post",
+          "path": "/orders",
+          "request": {
+            "headers": {"Content-Type": "application/json"},
+            "body": "{\"order\": {\"name\": \"Widget\", \"secret\": \"shh\"}}"
+          },
+          "response": {
+            "status": 201,
+            "headers": {"Content-Type": "application/json"},
+            "body": "{\"order\": {\"id\": 1, \"name\": \"Widget\", \"secret\": \"shh\"}}"
+          }
+        },
+        "valid": true
+      }
+    ]
+  }
+]
