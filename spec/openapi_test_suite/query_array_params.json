@@ -1,0 +1,1038 @@
+[
+  {
+    "description": "Array query params with default form style (explode=true)",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {
+        "title": "api",
+        "version": "1.0.0"
+      },
+      "paths": {
+        "/": {
+          "get": {
+            "parameters": [
+              {
+                "in": "query",
+                "required": true,
+                "name": "ids",
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "maxItems": 3
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Success",
+                "content": {
+                  "application/json": {
+                    "schema": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "request with repeated keys collects values into an array",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "ids=1&ids=2&ids=3",
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": null
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "request with a single value becomes a one-element array",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "ids=1",
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": null
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "request with too many items violates maxItems",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "ids=1&ids=2&ids=3&ids=4",
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": null
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "request without required array param is invalid",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "other=1",
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": null
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "request with bracketed keys maps to the array param",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "ids[]=1&ids[]=2",
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": null
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "request with url-encoded bracketed keys maps to the array param",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "ids%5B%5D=1&ids%5B%5D=2",
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": null
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "request with too many bracketed items violates maxItems",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "ids[]=1&ids[]=2&ids[]=3&ids[]=4",
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": null
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "exact key takes precedence over the bracketed key",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "ids=1&ids[]=2&ids[]=3&ids[]=4&ids[]=5",
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": null
+          }
+        },
+        "valid": true
+      }
+    ]
+  },
+  {
+    "description": "Array query params with explicit form style and explode=true",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {
+        "title": "api",
+        "version": "1.0.0"
+      },
+      "paths": {
+        "/": {
+          "get": {
+            "parameters": [
+              {
+                "in": "query",
+                "required": true,
+                "name": "ids",
+                "style": "form",
+                "explode": true,
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "maxItems": 2
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Success",
+                "content": {
+                  "application/json": {
+                    "schema": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "request with repeated keys is valid",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "ids=1&ids=2",
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": null
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "exploded values are not split on commas",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "ids=1,2&ids=3,4",
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": null
+          }
+        },
+        "valid": true
+      }
+    ]
+  },
+  {
+    "description": "Array query params with form style and explode=false",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {
+        "title": "api",
+        "version": "1.0.0"
+      },
+      "paths": {
+        "/": {
+          "get": {
+            "parameters": [
+              {
+                "in": "query",
+                "required": true,
+                "name": "ids",
+                "style": "form",
+                "explode": false,
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "maxItems": 3
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Success",
+                "content": {
+                  "application/json": {
+                    "schema": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "request with comma-separated values is valid",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "ids=1,2,3",
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": null
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "request with a single value becomes a one-element array",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "ids=1",
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": null
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "request with too many comma-separated values violates maxItems",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "ids=1,2,3,4",
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": null
+          }
+        },
+        "valid": false
+      }
+    ]
+  },
+  {
+    "description": "Array query params with spaceDelimited style",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {
+        "title": "api",
+        "version": "1.0.0"
+      },
+      "paths": {
+        "/": {
+          "get": {
+            "parameters": [
+              {
+                "in": "query",
+                "required": true,
+                "name": "ids",
+                "style": "spaceDelimited",
+                "explode": false,
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "maxItems": 3
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Success",
+                "content": {
+                  "application/json": {
+                    "schema": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "request with percent-encoded space-separated values is valid",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "ids=1%202%203",
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": null
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "request with plus-encoded space-separated values is valid",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "ids=1+2+3",
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": null
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "request with too many space-separated values violates maxItems",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "ids=1%202%203%204",
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": null
+          }
+        },
+        "valid": false
+      }
+    ]
+  },
+  {
+    "description": "Array query params with pipeDelimited style",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {
+        "title": "api",
+        "version": "1.0.0"
+      },
+      "paths": {
+        "/": {
+          "get": {
+            "parameters": [
+              {
+                "in": "query",
+                "required": true,
+                "name": "ids",
+                "style": "pipeDelimited",
+                "explode": false,
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "maxItems": 3
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Success",
+                "content": {
+                  "application/json": {
+                    "schema": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "request with pipe-separated values is valid",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "ids=1|2|3",
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": null
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "request with too many pipe-separated values violates maxItems",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "ids=1%7C2%7C3%7C4",
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": null
+          }
+        },
+        "valid": false
+      }
+    ]
+  },
+  {
+    "description": "Array query params with delimited styles and explode=true use repeated keys",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {
+        "title": "api",
+        "version": "1.0.0"
+      },
+      "paths": {
+        "/": {
+          "get": {
+            "parameters": [
+              {
+                "in": "query",
+                "required": true,
+                "name": "ids",
+                "style": "spaceDelimited",
+                "explode": true,
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "maxItems": 2
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Success",
+                "content": {
+                  "application/json": {
+                    "schema": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "request with repeated keys is valid",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "ids=1&ids=2",
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": null
+          }
+        },
+        "valid": true
+      }
+    ]
+  },
+  {
+    "description": "Array query params with typed items are coerced",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {
+        "title": "api",
+        "version": "1.0.0"
+      },
+      "paths": {
+        "/": {
+          "get": {
+            "parameters": [
+              {
+                "in": "query",
+                "required": true,
+                "name": "ids",
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Success",
+                "content": {
+                  "application/json": {
+                    "schema": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "request with integer values is valid",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "ids=1&ids=2",
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": null
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "request with a non-integer value is invalid",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "ids=1&ids=x",
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": null
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "request with an out-of-range integer value is invalid",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "ids=1&ids=0",
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": null
+          }
+        },
+        "valid": false
+      }
+    ]
+  },
+  {
+    "description": "Optional array query params",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {
+        "title": "api",
+        "version": "1.0.0"
+      },
+      "paths": {
+        "/": {
+          "get": {
+            "parameters": [
+              {
+                "in": "query",
+                "required": false,
+                "name": "ids",
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Success",
+                "content": {
+                  "application/json": {
+                    "schema": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "request without the optional array param is still skipped",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "other=1",
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": null
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "request with a value-less key validates as null (legacy behavior)",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "ids",
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": null
+          }
+        },
+        "valid": false
+      }
+    ]
+  },
+  {
+    "description": "Scalar query params are unaffected by array deserialization",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {
+        "title": "api",
+        "version": "1.0.0"
+      },
+      "paths": {
+        "/": {
+          "get": {
+            "parameters": [
+              {
+                "in": "query",
+                "required": true,
+                "name": "foo",
+                "schema": {
+                  "type": "string",
+                  "minLength": 3
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Success",
+                "content": {
+                  "application/json": {
+                    "schema": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "request with a single scalar value is valid",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "foo=abc",
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": null
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "repeated scalar keys keep the last value (legacy behavior)",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "foo=x&foo=abc",
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": null
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "repeated scalar keys validate the last value only (legacy behavior)",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "foo=abc&foo=x",
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": null
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "bracketed keys do not satisfy required scalar params",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "foo[]=abc",
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": null
+          }
+        },
+        "valid": false
+      }
+    ]
+  },
+  {
+    "description": "Optional scalar query params ignore bracketed keys",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {
+        "title": "api",
+        "version": "1.0.0"
+      },
+      "paths": {
+        "/": {
+          "get": {
+            "parameters": [
+              {
+                "in": "query",
+                "required": false,
+                "name": "foo",
+                "schema": {
+                  "type": "string",
+                  "minLength": 3
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Success",
+                "content": {
+                  "application/json": {
+                    "schema": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "bracketed keys are not validated against scalar params",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "foo[]=x",
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": null
+          }
+        },
+        "valid": true
+      }
+    ]
+  }
+]

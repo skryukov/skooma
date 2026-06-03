@@ -204,6 +204,30 @@ schema.registry.add_source(
 )
 ```
 
+### Array query parameters
+
+Skooma deserializes array-valued query parameters according to their `style` and `explode`
+keywords (`form`, `spaceDelimited`, and `pipeDelimited` styles are supported),
+and coerces each item to the type declared in the `items` schema:
+
+```yaml
+- in: query
+  name: ids
+  schema:
+    type: array
+    items:
+      type: integer
+```
+
+```
+GET /things?ids=1&ids=2&ids=3 # ids => [1, 2, 3]
+```
+
+As a convenience, the non-standard Rails/Rack bracket convention is also recognized:
+`GET /things?ids[]=1&ids[]=2` matches the array parameter named `ids`.
+The bracket form is only used when the parameter declares `type: array` and
+the query string contains no exact `ids` key.
+
 ## Alternatives
 
 - [openapi_first](https://github.com/ahx/openapi_first)
@@ -212,7 +236,8 @@ schema.registry.add_source(
 ## Feature plans
 
 - Full OpenAPI 3.1.0 support:
-  - respect `style` and `explode` keywords
+  - respect `style` and `explode` keywords for path, header, and cookie parameters
+    (already supported for query parameters)
   - xml
 - Callbacks and webhooks validations
 - Example validations

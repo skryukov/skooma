@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning].
 ### Added
 
 - Support for external `$ref`s in OpenAPI documents. References like `$ref: './responses.yaml#/UsersResponse'` now resolve against the spec file's directory (or any source registered on the registry) and are wrapped with the appropriate OpenAPI object type — Response, Parameter, Header, RequestBody, PathItem, or a plain JSON Schema for `schema:` refs. Chained and self-recursive external refs are supported. ([@skryukov])
+- Support array-valued query parameters: respect the `style` and `explode` keywords (`form`, `spaceDelimited`, and `pipeDelimited` styles), coerce array items to the declared `items` type, and map the non-standard bracket convention (`ids[]=1&ids[]=2`) to array params. ([@dslh])
 
 ### Changed
 
@@ -191,6 +192,7 @@ and this project adheres to [Semantic Versioning].
 [@aburgel]: https://github.com/aburgel
 [@alexkalderimis]: https://github.com/alexkalderimis
 [@barnaclebarnes]: https://github.com/barnaclebarnes
+[@dslh]: https://github.com/dslh
 [@Envek]: https://github.com/Envek
 [@goodtouch]: https://github.com/goodtouch
 [@jandouwebeekman]: https://github.com/jandouwebeekman

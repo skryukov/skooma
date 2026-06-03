@@ -7,6 +7,10 @@ module Skooma
         value = self&.value
         return self if value.nil?
 
+        Coercible.coerce_value(value, json)
+      end
+
+      def self.coerce_value(value, json)
         case json["type"]
         when "integer"
           begin
@@ -28,11 +32,17 @@ module Skooma
           value
           # convert_object(value, schema)
         when "array"
-          # convert_array(value, schema)
-          value
+          coerce_array_items(value, json["items"])
         else
           value
         end
+      end
+
+      def self.coerce_array_items(value, items_schema)
+        return value unless value.is_a?(Array)
+        return value unless items_schema.is_a?(JSONSkooma::JSONSchema) && items_schema.type == "object"
+
+        value.map { |item| item.is_a?(String) ? coerce_value(item, items_schema) : item }
       end
     end
 
