@@ -1,0 +1,229 @@
+[
+  {
+    "description": "Array path params with the default simple style",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {"title": "api", "version": "1.0.0"},
+      "paths": {
+        "/things/{id}": {
+          "get": {
+            "parameters": [
+              {
+                "in": "path",
+                "name": "id",
+                "required": true,
+                "schema": {
+                  "type": "array",
+                  "items": {"type": "integer"},
+                  "maxItems": 3
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Success",
+                "content": {"application/json": {"schema": {}}}
+              }
+            }
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "a comma-separated segment is split and items are coerced",
+        "data": {
+          "method": "get",
+          "path": "/things/1,2,3",
+          "request": {"headers": {"Content-Type": "application/json"}},
+          "response": {"status": 200, "headers": {"Content-Type": "application/json"}, "body": null}
+        },
+        "valid": true
+      },
+      {
+        "description": "too many items violates maxItems",
+        "data": {
+          "method": "get",
+          "path": "/things/1,2,3,4",
+          "request": {"headers": {"Content-Type": "application/json"}},
+          "response": {"status": 200, "headers": {"Content-Type": "application/json"}, "body": null}
+        },
+        "valid": false
+      },
+      {
+        "description": "an item that fails its type is invalid",
+        "data": {
+          "method": "get",
+          "path": "/things/1,x",
+          "request": {"headers": {"Content-Type": "application/json"}},
+          "response": {"status": 200, "headers": {"Content-Type": "application/json"}, "body": null}
+        },
+        "valid": false
+      }
+    ]
+  },
+  {
+    "description": "Array path params with label style",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {"title": "api", "version": "1.0.0"},
+      "paths": {
+        "/things/{id}": {
+          "get": {
+            "parameters": [
+              {
+                "in": "path",
+                "name": "id",
+                "required": true,
+                "style": "label",
+                "explode": false,
+                "schema": {"type": "array", "items": {"type": "integer"}}
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Success",
+                "content": {"application/json": {"schema": {}}}
+              }
+            }
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "non-exploded label values are dot-prefixed and comma-separated",
+        "data": {
+          "method": "get",
+          "path": "/things/.1,2,3",
+          "request": {"headers": {"Content-Type": "application/json"}},
+          "response": {"status": 200, "headers": {"Content-Type": "application/json"}, "body": null}
+        },
+        "valid": true
+      }
+    ]
+  },
+  {
+    "description": "Array path params with label style and explode=true",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {"title": "api", "version": "1.0.0"},
+      "paths": {
+        "/things/{id}": {
+          "get": {
+            "parameters": [
+              {
+                "in": "path",
+                "name": "id",
+                "required": true,
+                "style": "label",
+                "explode": true,
+                "schema": {"type": "array", "items": {"type": "integer"}}
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Success",
+                "content": {"application/json": {"schema": {}}}
+              }
+            }
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "exploded label values are dot-separated",
+        "data": {
+          "method": "get",
+          "path": "/things/.1.2.3",
+          "request": {"headers": {"Content-Type": "application/json"}},
+          "response": {"status": 200, "headers": {"Content-Type": "application/json"}, "body": null}
+        },
+        "valid": true
+      }
+    ]
+  },
+  {
+    "description": "Array path params with matrix style",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {"title": "api", "version": "1.0.0"},
+      "paths": {
+        "/things/{id}": {
+          "get": {
+            "parameters": [
+              {
+                "in": "path",
+                "name": "id",
+                "required": true,
+                "style": "matrix",
+                "explode": false,
+                "schema": {"type": "array", "items": {"type": "integer"}}
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Success",
+                "content": {"application/json": {"schema": {}}}
+              }
+            }
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "non-exploded matrix values are name-prefixed and comma-separated",
+        "data": {
+          "method": "get",
+          "path": "/things/;id=1,2,3",
+          "request": {"headers": {"Content-Type": "application/json"}},
+          "response": {"status": 200, "headers": {"Content-Type": "application/json"}, "body": null}
+        },
+        "valid": true
+      }
+    ]
+  },
+  {
+    "description": "Array path params with matrix style and explode=true",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {"title": "api", "version": "1.0.0"},
+      "paths": {
+        "/things/{id}": {
+          "get": {
+            "parameters": [
+              {
+                "in": "path",
+                "name": "id",
+                "required": true,
+                "style": "matrix",
+                "explode": true,
+                "schema": {"type": "array", "items": {"type": "integer"}}
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Success",
+                "content": {"application/json": {"schema": {}}}
+              }
+            }
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "exploded matrix values repeat the name per item",
+        "data": {
+          "method": "get",
+          "path": "/things/;id=1;id=2;id=3",
+          "request": {"headers": {"Content-Type": "application/json"}},
+          "response": {"status": 200, "headers": {"Content-Type": "application/json"}, "body": null}
+        },
+        "valid": true
+      }
+    ]
+  }
+]

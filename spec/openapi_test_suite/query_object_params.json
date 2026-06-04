@@ -1,0 +1,313 @@
+[
+  {
+    "description": "deepObject query params coerce and validate their properties",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {
+        "title": "api",
+        "version": "1.0.0"
+      },
+      "paths": {
+        "/": {
+          "get": {
+            "parameters": [
+              {
+                "in": "query",
+                "name": "filter",
+                "required": true,
+                "style": "deepObject",
+                "explode": true,
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "a": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "b": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["a"]
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Success",
+                "content": {
+                  "application/json": {
+                    "schema": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "bracketed properties are gathered and the integer property is coerced",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "filter[a]=1&filter[b]=x",
+            "headers": {"Content-Type": "application/json"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "url-encoded brackets are gathered the same way",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "filter%5Ba%5D=2&filter%5Bb%5D=y",
+            "headers": {"Content-Type": "application/json"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "a property that fails its type is invalid",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "filter[a]=x",
+            "headers": {"Content-Type": "application/json"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "a coerced value is validated against the property schema (0 violates minimum 1)",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "filter[a]=0",
+            "headers": {"Content-Type": "application/json"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "a missing required property is invalid",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "filter[b]=x",
+            "headers": {"Content-Type": "application/json"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "a missing required deepObject param is invalid",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "other=1",
+            "headers": {"Content-Type": "application/json"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": false
+      }
+    ]
+  },
+  {
+    "description": "Optional deepObject query params",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {
+        "title": "api",
+        "version": "1.0.0"
+      },
+      "paths": {
+        "/": {
+          "get": {
+            "parameters": [
+              {
+                "in": "query",
+                "name": "filter",
+                "required": false,
+                "style": "deepObject",
+                "explode": true,
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "a": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Success",
+                "content": {
+                  "application/json": {
+                    "schema": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "an absent optional deepObject param is skipped",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "other=1",
+            "headers": {"Content-Type": "application/json"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "a present optional deepObject param is coerced and validated",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "filter[a]=5",
+            "headers": {"Content-Type": "application/json"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": true
+      }
+    ]
+  },
+  {
+    "description": "deepObject query params coerce additionalProperties-typed members",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {"title": "api", "version": "1.0.0"},
+      "paths": {
+        "/": {
+          "get": {
+            "parameters": [
+              {
+                "in": "query",
+                "name": "counts",
+                "required": true,
+                "style": "deepObject",
+                "explode": true,
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {"type": "integer", "minimum": 1}
+                }
+              }
+            ],
+            "responses": {"200": {"description": "ok"}}
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "members are coerced to integers",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "counts[a]=1&counts[b]=2",
+            "headers": {"Content-Type": "application/json"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "a member failing the schema is invalid",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "counts[a]=0",
+            "headers": {"Content-Type": "application/json"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "a non-integer member is invalid",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "counts[a]=x",
+            "headers": {"Content-Type": "application/json"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": false
+      }
+    ]
+  }
+]

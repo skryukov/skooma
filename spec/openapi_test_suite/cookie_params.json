@@ -1,0 +1,250 @@
+[
+  {
+    "description": "Scalar cookie parameters",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {
+        "title": "api",
+        "version": "1.0.0"
+      },
+      "paths": {
+        "/": {
+          "get": {
+            "parameters": [
+              {
+                "in": "cookie",
+                "name": "session_id",
+                "required": true,
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Success",
+                "content": {
+                  "application/json": {
+                    "schema": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "a cookie value is read and coerced to the declared type",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "headers": {"Content-Type": "application/json", "Cookie": "session_id=42"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "a cookie value that fails its type is invalid",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "headers": {"Content-Type": "application/json", "Cookie": "session_id=abc"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "the named cookie is selected from among several",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "headers": {"Content-Type": "application/json", "Cookie": "other=1; session_id=42; last=9"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "a missing required cookie is invalid",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "headers": {"Content-Type": "application/json", "Cookie": "other=1"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": false
+      }
+    ]
+  },
+  {
+    "description": "Array-valued cookie parameters (form style)",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {
+        "title": "api",
+        "version": "1.0.0"
+      },
+      "paths": {
+        "/": {
+          "get": {
+            "parameters": [
+              {
+                "in": "cookie",
+                "name": "ids",
+                "required": true,
+                "style": "form",
+                "explode": false,
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  },
+                  "maxItems": 3
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Success",
+                "content": {
+                  "application/json": {
+                    "schema": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "a comma-separated cookie is split and coerced",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "headers": {"Content-Type": "application/json", "Cookie": "ids=1,2,3"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "too many items violates maxItems",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "headers": {"Content-Type": "application/json", "Cookie": "ids=1,2,3,4"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "an item that fails its type is invalid",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "headers": {"Content-Type": "application/json", "Cookie": "ids=1,x"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": false
+      }
+    ]
+  },
+  {
+    "description": "Optional cookie parameters",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {
+        "title": "api",
+        "version": "1.0.0"
+      },
+      "paths": {
+        "/": {
+          "get": {
+            "parameters": [
+              {
+                "in": "cookie",
+                "name": "session_id",
+                "required": false,
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Success",
+                "content": {
+                  "application/json": {
+                    "schema": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "an absent optional cookie is skipped",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "headers": {"Content-Type": "application/json"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": true
+      }
+    ]
+  }
+]

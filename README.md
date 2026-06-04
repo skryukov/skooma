@@ -228,6 +228,53 @@ As a convenience, the non-standard Rails/Rack bracket convention is also recogni
 The bracket form is only used when the parameter declares `type: array` and
 the query string contains no exact `ids` key.
 
+### Object query parameters
+
+Skooma deserializes object-valued query parameters declared with the `deepObject`
+style, gathering the bracketed members and coercing each property to the type
+declared in its `properties` schema:
+
+```yaml
+- in: query
+  name: filter
+  style: deepObject
+  explode: true
+  schema:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+```
+
+```
+GET /things?filter[id]=1&filter[name]=foo # filter => { "id" => 1, "name" => "foo" }
+```
+
+### Header and cookie parameters
+
+Array-valued header (`simple` style) and cookie (`form` style) parameters are
+deserialized from their delimited form and each item is coerced to the declared
+`items` type:
+
+```
+X-Ids: 1,2,3            # X-Ids  => [1, 2, 3]
+Cookie: ids=1,2,3       # ids    => [1, 2, 3]
+```
+
+### Path parameters
+
+Array-valued path parameters are deserialized according to their `style`
+(`simple`, `label`, `matrix`) and `explode` keywords, with each item coerced to
+the declared `items` type:
+
+```
+GET /things/1,2,3          # simple:            id => [1, 2, 3]
+GET /things/.1.2.3         # label, explode:    id => [1, 2, 3]
+GET /things/;id=1;id=2     # matrix, explode:   id => [1, 2]
+```
+
 ## Alternatives
 
 - [openapi_first](https://github.com/ahx/openapi_first)
@@ -236,8 +283,7 @@ the query string contains no exact `ids` key.
 ## Feature plans
 
 - Full OpenAPI 3.1.0 support:
-  - respect `style` and `explode` keywords for path, header, and cookie parameters
-    (already supported for query parameters)
+  - object-valued path and form-encoded query parameters
   - xml
 - Callbacks and webhooks validations
 - Example validations

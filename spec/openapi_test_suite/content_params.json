@@ -1,0 +1,176 @@
+[
+  {
+    "description": "Content-typed query parameters are parsed as their media type",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {"title": "api", "version": "1.0.0"},
+      "paths": {
+        "/": {
+          "get": {
+            "parameters": [
+              {
+                "in": "query",
+                "name": "f",
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "a": {"type": "integer"},
+                        "b": {"type": "string"}
+                      },
+                      "required": ["a"]
+                    }
+                  }
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Success",
+                "content": {"application/json": {"schema": {}}}
+              }
+            }
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "a JSON object value is parsed and validated against the schema",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "f=%7B%22a%22%3A1%2C%22b%22%3A%22x%22%7D",
+            "headers": {"Content-Type": "application/json"}
+          },
+          "response": {"status": 200, "headers": {"Content-Type": "application/json"}, "body": null}
+        },
+        "valid": true
+      },
+      {
+        "description": "JSON-native types are respected (a string where an integer is required is invalid)",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "f=%7B%22a%22%3A%221%22%7D",
+            "headers": {"Content-Type": "application/json"}
+          },
+          "response": {"status": 200, "headers": {"Content-Type": "application/json"}, "body": null}
+        },
+        "valid": false
+      },
+      {
+        "description": "a missing required property is invalid",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "f=%7B%22b%22%3A%22x%22%7D",
+            "headers": {"Content-Type": "application/json"}
+          },
+          "response": {"status": 200, "headers": {"Content-Type": "application/json"}, "body": null}
+        },
+        "valid": false
+      },
+      {
+        "description": "an unparseable value fails validation rather than raising",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "f=notjson",
+            "headers": {"Content-Type": "application/json"}
+          },
+          "response": {"status": 200, "headers": {"Content-Type": "application/json"}, "body": null}
+        },
+        "valid": false
+      },
+      {
+        "description": "a missing required content param is invalid",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "other=1",
+            "headers": {"Content-Type": "application/json"}
+          },
+          "response": {"status": 200, "headers": {"Content-Type": "application/json"}, "body": null}
+        },
+        "valid": false
+      }
+    ]
+  },
+  {
+    "description": "Content-typed header parameters are parsed as their media type",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {"title": "api", "version": "1.0.0"},
+      "paths": {
+        "/": {
+          "get": {
+            "parameters": [
+              {
+                "in": "header",
+                "name": "X-Count",
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {"type": "integer", "minimum": 1}
+                  }
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Success",
+                "content": {"application/json": {"schema": {}}}
+              }
+            }
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "a JSON number header is parsed to an integer and validated",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "headers": {"Content-Type": "application/json", "X-Count": "5"}
+          },
+          "response": {"status": 200, "headers": {"Content-Type": "application/json"}, "body": null}
+        },
+        "valid": true
+      },
+      {
+        "description": "a parsed value is validated against the schema (0 violates minimum)",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "headers": {"Content-Type": "application/json", "X-Count": "0"}
+          },
+          "response": {"status": 200, "headers": {"Content-Type": "application/json"}, "body": null}
+        },
+        "valid": false
+      },
+      {
+        "description": "a missing required content header is invalid",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "headers": {"Content-Type": "application/json"}
+          },
+          "response": {"status": 200, "headers": {"Content-Type": "application/json"}, "body": null}
+        },
+        "valid": false
+      }
+    ]
+  }
+]

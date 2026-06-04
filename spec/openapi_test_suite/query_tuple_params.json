@@ -1,0 +1,100 @@
+[
+  {
+    "description": "tuple-typed query params coerce prefixItems positionally",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {"title": "api", "version": "1.0.0"},
+      "paths": {
+        "/": {
+          "get": {
+            "parameters": [
+              {
+                "in": "query",
+                "name": "pair",
+                "required": true,
+                "style": "form",
+                "explode": false,
+                "schema": {
+                  "type": "array",
+                  "prefixItems": [{"type": "integer"}, {"type": "string"}],
+                  "items": {"type": "integer"}
+                }
+              }
+            ],
+            "responses": {"200": {"description": "ok"}}
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "positions coerce against their prefix schema",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "pair=1,a",
+            "headers": {"Content-Type": "application/json"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "trailing positions coerce against items",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "pair=1,a,2,3",
+            "headers": {"Content-Type": "application/json"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "a position violating its prefix schema is invalid",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "pair=x,a",
+            "headers": {"Content-Type": "application/json"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "a trailing position violating items is invalid",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "pair=1,a,b",
+            "headers": {"Content-Type": "application/json"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": false
+      }
+    ]
+  }
+]

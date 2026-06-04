@@ -40,9 +40,68 @@ module Skooma
 
       def self.coerce_array_items(value, items_schema)
         return value unless value.is_a?(Array)
-        return value unless items_schema.is_a?(JSONSkooma::JSONSchema) && items_schema.type == "object"
+        return value unless schema_object?(items_schema)
 
         value.map { |item| item.is_a?(String) ? coerce_value(item, items_schema) : item }
+      end
+
+      # Recursive coercion for *parameters* only. Parameter values arrive as
+      # all-strings, so we descend into array items (positional `prefixItems`
+      # first, then `items`) and object properties (`properties` first, then
+      # `additionalProperties`), coercing each to its declared type.
+      # Request/response *bodies* are only shallowly coerced (top level, via
+      # `coerce` above), so a *nested* JSON body value like `{"count": "5"}`
+      # against `integer` stays invalid.
+      def deep_coerce(json)
+        return if value.nil?
+
+        Coercible.deep_coerce_value(value, json)
+      end
+
+      def self.deep_coerce_value(value, json)
+        return value if value.nil?
+
+        case json["type"]
+        when "array"
+          return value unless value.is_a?(Array)
+
+          prefix_items = json["prefixItems"]
+          items = json["items"]
+
+          value.map.with_index do |item, index|
+            schema = prefix_schema(prefix_items, index) || items
+            schema_object?(schema) ? deep_coerce_value(item, schema) : item
+          end
+        when "object"
+          return value unless value.is_a?(Hash)
+
+          properties = json["properties"]
+          additional_properties = json["additionalProperties"]
+
+          value.each_with_object({}) do |(key, item), coerced|
+            schema = properties.respond_to?(:key?) ? properties[key] : nil
+            schema ||= additional_properties
+            coerced[key] = schema_object?(schema) ? deep_coerce_value(item, schema) : item
+          end
+        else
+          # Scalar schema: only scalar values are coercible. A structural value
+          # here means a type mismatch (e.g. `deepObject` against a scalar
+          # schema) — leave it for validation to reject rather than coerce.
+          (value.is_a?(Hash) || value.is_a?(Array)) ? value : coerce_value(value, json)
+        end
+      end
+
+      # True when `node` is a real subschema (a JSON object), excluding boolean
+      # schemas like `items: true`.
+      def self.schema_object?(node)
+        node.is_a?(JSONSkooma::JSONSchema) && node.type == "object"
+      end
+
+      # The positional subschema for `index` when `prefixItems` is present.
+      def self.prefix_schema(prefix_items, index)
+        return unless prefix_items.is_a?(JSONSkooma::JSONNode) && prefix_items.type == "array"
+
+        prefix_items[index]
       end
     end
 
