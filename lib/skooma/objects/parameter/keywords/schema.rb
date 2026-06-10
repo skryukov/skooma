@@ -9,7 +9,7 @@ module Skooma
           self.depends_on = %w[in name style explode allowReserved allowEmptyValue]
 
           def evaluate(instance, result)
-            value = ValueParser.call(instance, result)
+            value = ValueParser.call(instance, result, array: ValueParser.array_param?(parent_schema))
             return result.discard if value.nil?
 
             super(value, result)

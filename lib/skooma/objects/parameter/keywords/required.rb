@@ -9,7 +9,10 @@ module Skooma
           self.depends_on = %w[in name style explode allowReserved allowEmptyValue]
 
           def evaluate(instance, result)
-            if json.value && ValueParser.call(instance, result)&.value.nil?
+            return unless json.value
+
+            value = ValueParser.call(instance, result, array: ValueParser.array_param?(parent_schema))
+            if value&.value.nil?
               result.failure("Parameter is required")
             end
           end

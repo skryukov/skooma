@@ -7,8 +7,15 @@ module Skooma
     class Parameter
       module Keywords
         module ValueParser
+          # https://spec.openapis.org/oas/v3.1.0#style-values
+          ARRAY_STYLE_DELIMITERS = {
+            "form" => ",",
+            "spaceDelimited" => " ",
+            "pipeDelimited" => "|"
+          }.freeze
+
           class << self
-            def call(instance, result)
+            def call(instance, result, array: false)
               type = result.sibling(instance, "in")&.annotation
               raise Error, "Missing `in` key #{result.path}" unless type
 
@@ -17,7 +24,7 @@ module Skooma
 
               case type
               when "query"
-                parse_query(instance)[key]
+                query_param_value(instance, result, key, array: array)
               when "header"
                 instance["headers"][key]
               when "path"
@@ -36,43 +43,53 @@ module Skooma
               end
             end
 
-            private
-
-            def parse_query(instance)
-              params = {}
-              instance["query"]&.value.to_s.split(/[&;]/).each do |pairs|
-                key, value = pairs.split("=", 2).collect { |v| CGI.unescape(v) }
-                next unless key
-
-                params[key] = value
-              end
-
-              Instance::Attribute.new(
-                params,
-                key: "query",
-                parent: instance["query"]
-              )
+            def array_param?(parameter)
+              schema = parameter["schema"]
+              schema.is_a?(JSONSkooma::JSONSchema) && schema.type == "object" && schema["type"] == "array"
             end
 
-            def style(value, instance, result)
-              case result.sibling(instance, "style")
-              when "simple"
-                value
-              when "label"
-                value.split(".")
-              when "matrix"
-                value.split(";")
-              when "form"
-                value.split("&")
-              when "spaceDelimited"
-                value.split(" ")
-              when "pipeDelimited"
-                value.split("|")
-              when "deepObject"
-                raise Error, "Not implemented yet"
-              else
-                raise Error, "Unknown style: #{result.sibling(instance, "style")}"
+            private
+
+            def query_param_value(instance, result, key, array:)
+              params = parse_query(instance["query"]&.value)
+              values = params[key]
+              # Support the non-standard Rails/Rack/PHP bracket convention
+              # (`ids[]=1&ids[]=2`) for array params declared as `name: ids`.
+              values = params["#{key}[]"] if values.nil? && array
+              return nil if values.nil?
+
+              value =
+                if array && !values.last.nil?
+                  deserialize_array(values, instance, result)
+                else
+                  # the last value wins for scalars and value-less keys (e.g. `?ids`)
+                  values.last
+                end
+
+              Instance::Attribute.new(value, key: key, parent: instance["query"])
+            end
+
+            def parse_query(query_string)
+              params = {}
+              query_string.to_s.split(/[&;]/).each do |pair|
+                key, value = pair.split("=", 2).collect { |v| CGI.unescape(v) }
+                next unless key
+
+                (params[key] ||= []) << value
               end
+
+              params
+            end
+
+            def deserialize_array(values, instance, result)
+              style = result.sibling(instance, "style")&.annotation || "form"
+              explode = result.sibling(instance, "explode")&.annotation
+              explode = style == "form" if explode.nil?
+
+              # exploded arrays are serialized as repeated keys (`ids=1&ids=2`)
+              return values.compact if explode
+
+              values.last.split(ARRAY_STYLE_DELIMITERS.fetch(style, ","))
             end
           end
         end
