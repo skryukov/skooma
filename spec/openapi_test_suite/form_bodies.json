@@ -150,5 +150,190 @@
         "valid": false
       }
     ]
+  },
+  {
+    "description": "multipart encoding decodes JSON-typed fields before validation",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {"title": "api", "version": "1.0.0"},
+      "paths": {
+        "/upload": {
+          "post": {
+            "requestBody": {
+              "required": true,
+              "content": {
+                "multipart/form-data": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "meta": {
+                        "type": "object",
+                        "properties": {"tag": {"type": "string"}},
+                        "required": ["tag"]
+                      },
+                      "config": {"type": "object"},
+                      "file": {"type": "string", "format": "binary"}
+                    },
+                    "required": ["meta", "file"]
+                  },
+                  "encoding": {
+                    "meta": {"contentType": "application/vnd.acme+json"}
+                  }
+                }
+              }
+            },
+            "responses": {"201": {"description": "created"}}
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "an explicitly encoded field is JSON-decoded and validated",
+        "data": {
+          "method": "post",
+          "path": "/upload",
+          "request": {
+            "query": "",
+            "headers": {"Content-Type": "multipart/form-data; boundary=BNDRY"},
+            "body": "--BNDRY\r\nContent-Disposition: form-data; name=\"meta\"\r\nContent-Type: application/vnd.acme+json\r\n\r\n{\"tag\": \"x\"}\r\n--BNDRY\r\nContent-Disposition: form-data; name=\"file\"; filename=\"a.txt\"\r\nContent-Type: text/plain\r\n\r\nhi\r\n--BNDRY--\r\n"
+          },
+          "response": {
+            "status": 201,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "a decoded field failing its schema is invalid",
+        "data": {
+          "method": "post",
+          "path": "/upload",
+          "request": {
+            "query": "",
+            "headers": {"Content-Type": "multipart/form-data; boundary=BNDRY"},
+            "body": "--BNDRY\r\nContent-Disposition: form-data; name=\"meta\"\r\nContent-Type: application/vnd.acme+json\r\n\r\n{\"other\": 1}\r\n--BNDRY\r\nContent-Disposition: form-data; name=\"file\"; filename=\"a.txt\"\r\nContent-Type: text/plain\r\n\r\nhi\r\n--BNDRY--\r\n"
+          },
+          "response": {
+            "status": 201,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "a malformed JSON field stays a string and is invalid",
+        "data": {
+          "method": "post",
+          "path": "/upload",
+          "request": {
+            "query": "",
+            "headers": {"Content-Type": "multipart/form-data; boundary=BNDRY"},
+            "body": "--BNDRY\r\nContent-Disposition: form-data; name=\"meta\"\r\nContent-Type: application/vnd.acme+json\r\n\r\n{broken\r\n--BNDRY\r\nContent-Disposition: form-data; name=\"file\"; filename=\"a.txt\"\r\nContent-Type: text/plain\r\n\r\nhi\r\n--BNDRY--\r\n"
+          },
+          "response": {
+            "status": 201,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "object-typed properties default to JSON decoding without explicit encoding",
+        "data": {
+          "method": "post",
+          "path": "/upload",
+          "request": {
+            "query": "",
+            "headers": {"Content-Type": "multipart/form-data; boundary=BNDRY"},
+            "body": "--BNDRY\r\nContent-Disposition: form-data; name=\"meta\"\r\nContent-Type: application/vnd.acme+json\r\n\r\n{\"tag\": \"x\"}\r\n--BNDRY\r\nContent-Disposition: form-data; name=\"config\"\r\n\r\n{\"theme\": \"dark\"}\r\n--BNDRY\r\nContent-Disposition: form-data; name=\"file\"; filename=\"a.txt\"\r\nContent-Type: text/plain\r\n\r\nhi\r\n--BNDRY--\r\n"
+          },
+          "response": {
+            "status": 201,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": true
+      }
+    ]
+  },
+  {
+    "description": "urlencoded encoding decodes JSON-typed fields before validation",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {"title": "api", "version": "1.0.0"},
+      "paths": {
+        "/forms": {
+          "post": {
+            "requestBody": {
+              "required": true,
+              "content": {
+                "application/x-www-form-urlencoded": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "name": {"type": "string"},
+                      "filter": {
+                        "type": "object",
+                        "properties": {"id": {"type": "integer"}},
+                        "required": ["id"]
+                      }
+                    },
+                    "required": ["name", "filter"]
+                  },
+                  "encoding": {
+                    "filter": {"contentType": "application/json"}
+                  }
+                }
+              }
+            },
+            "responses": {"201": {"description": "created"}}
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "the encoded field is JSON-decoded and validated",
+        "data": {
+          "method": "post",
+          "path": "/forms",
+          "request": {
+            "query": "",
+            "headers": {"Content-Type": "application/x-www-form-urlencoded"},
+            "body": "name=Alex&filter=%7B%22id%22%3A%201%7D"
+          },
+          "response": {
+            "status": 201,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "a decoded field failing its schema is invalid",
+        "data": {
+          "method": "post",
+          "path": "/forms",
+          "request": {
+            "query": "",
+            "headers": {"Content-Type": "application/x-www-form-urlencoded"},
+            "body": "name=Alex&filter=%7B%22id%22%3A%20%22x%22%7D"
+          },
+          "response": {
+            "status": 201,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": false
+      }
+    ]
   }
 ]

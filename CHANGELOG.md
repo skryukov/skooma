@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning].
 ### Added
 
 - Parse `multipart/form-data` and `application/x-www-form-urlencoded` request bodies before validation. File parts are read as binary strings, so uploads validate against `type: string` / `format: binary` schemas. Fixes file upload validation failing with errors like "body id required". ([@skryukov])
+- Respect the Media Type Object's `encoding` field for form bodies: fields with a JSON `contentType` are decoded before validation (multipart object-typed properties default to JSON per the spec). ([@skryukov])
 - Allow passing a custom coverage store to the RSpec/Minitest helpers via `coverage_store:` — any object implementing `load_data`, `save_data`, and `clear`. Useful for writing one coverage file per parallel CI runner and merging afterwards. ([@skryukov])
 - Support object-valued path parameters (`simple`, `label`, and `matrix` styles, explode-aware) and `form`-style object query parameters. Exploded form objects (`?x=1&y=2`) are gathered by matching the schema's `properties` names; non-exploded forms flatten under the parameter's name (`?point=x,1,y,2`). Properties are coerced to their declared types. ([@skryukov])
 
