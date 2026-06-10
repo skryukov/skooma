@@ -307,6 +307,27 @@ GET /points/x=1,y=2        # simple, explode:   point => { "x" => 1, "y" => 2 }
 GET /points/;x=1;y=2       # matrix, explode:   point => { "x" => 1, "y" => 2 }
 ```
 
+### Form and multipart request bodies
+
+`application/x-www-form-urlencoded` and `multipart/form-data` request bodies
+are parsed before validation, so file uploads validate against their OpenAPI
+schemas. File parts are read as binary strings, matching
+`type: string` / `format: binary` properties:
+
+```yaml
+requestBody:
+  content:
+    multipart/form-data:
+      schema:
+        type: object
+        properties:
+          id: {type: string}
+          file: {type: string, format: binary}
+```
+
+Custom parsers for other media types can be registered via
+`Skooma::BodyParsers.register("application/xml", ->(body, headers:) { ... })`.
+
 ## Alternatives
 
 - [openapi_first](https://github.com/ahx/openapi_first)
