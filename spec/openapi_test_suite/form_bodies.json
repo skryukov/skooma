@@ -1,0 +1,154 @@
+[
+  {
+    "description": "multipart/form-data request bodies are parsed and validated",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {"title": "api", "version": "1.0.0"},
+      "paths": {
+        "/upload": {
+          "post": {
+            "requestBody": {
+              "required": true,
+              "content": {
+                "multipart/form-data": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "id": {"type": "string"},
+                      "file": {"type": "string", "format": "binary"}
+                    },
+                    "required": ["id", "file"]
+                  }
+                }
+              }
+            },
+            "responses": {"201": {"description": "created"}}
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "a body with all required parts is valid",
+        "data": {
+          "method": "post",
+          "path": "/upload",
+          "request": {
+            "query": "",
+            "headers": {"Content-Type": "multipart/form-data; boundary=BNDRY"},
+            "body": "--BNDRY\r\nContent-Disposition: form-data; name=\"id\"\r\n\r\n123\r\n--BNDRY\r\nContent-Disposition: form-data; name=\"file\"; filename=\"a.txt\"\r\nContent-Type: text/plain\r\n\r\nhello world\r\n--BNDRY--\r\n"
+          },
+          "response": {
+            "status": 201,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "a body missing a required part is invalid",
+        "data": {
+          "method": "post",
+          "path": "/upload",
+          "request": {
+            "query": "",
+            "headers": {"Content-Type": "multipart/form-data; boundary=BNDRY"},
+            "body": "--BNDRY\r\nContent-Disposition: form-data; name=\"file\"; filename=\"a.txt\"\r\nContent-Type: text/plain\r\n\r\nhello world\r\n--BNDRY--\r\n"
+          },
+          "response": {
+            "status": 201,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "a malformed multipart body is invalid",
+        "data": {
+          "method": "post",
+          "path": "/upload",
+          "request": {
+            "query": "",
+            "headers": {"Content-Type": "multipart/form-data; boundary=BNDRY"},
+            "body": "this is not multipart at all"
+          },
+          "response": {
+            "status": 201,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": false
+      }
+    ]
+  },
+  {
+    "description": "application/x-www-form-urlencoded request bodies are parsed and validated",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {"title": "api", "version": "1.0.0"},
+      "paths": {
+        "/forms": {
+          "post": {
+            "requestBody": {
+              "required": true,
+              "content": {
+                "application/x-www-form-urlencoded": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "name": {"type": "string"},
+                      "tags": {"type": "array", "items": {"type": "string"}}
+                    },
+                    "required": ["name"]
+                  }
+                }
+              }
+            },
+            "responses": {"201": {"description": "created"}}
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "form fields build an object, including bracketed arrays",
+        "data": {
+          "method": "post",
+          "path": "/forms",
+          "request": {
+            "query": "",
+            "headers": {"Content-Type": "application/x-www-form-urlencoded"},
+            "body": "name=Alex&tags[]=a&tags[]=b"
+          },
+          "response": {
+            "status": 201,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "a missing required field is invalid",
+        "data": {
+          "method": "post",
+          "path": "/forms",
+          "request": {
+            "query": "",
+            "headers": {"Content-Type": "application/x-www-form-urlencoded"},
+            "body": "tags[]=a"
+          },
+          "response": {
+            "status": 201,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": false
+      }
+    ]
+  }
+]
