@@ -252,6 +252,19 @@ declared in its `properties` schema:
 GET /things?filter[id]=1&filter[name]=foo # filter => { "id" => 1, "name" => "foo" }
 ```
 
+The default `form` style is also supported. Exploded form objects (the default)
+drop the parameter name — each property declared in the schema becomes its own
+query key — while non-exploded objects flatten under the parameter's name:
+
+```
+GET /things?x=1&y=2        # form, explode:  point => { "x" => 1, "y" => 2 }
+GET /things?point=x,1,y,2  # form:           point => { "x" => 1, "y" => 2 }
+```
+
+Note that exploded form objects are gathered by matching the schema's
+`properties` names, so members allowed only via `additionalProperties` are not
+recognized.
+
 ### Header and cookie parameters
 
 Array-valued header (`simple` style) and cookie (`form` style) parameters are
@@ -275,6 +288,15 @@ GET /things/.1.2.3         # label, explode:    id => [1, 2, 3]
 GET /things/;id=1;id=2     # matrix, explode:   id => [1, 2]
 ```
 
+Object-valued path parameters flatten their properties into the segment and are
+rebuilt with each property coerced via the `properties` schema:
+
+```
+GET /points/x,1,y,2        # simple:            point => { "x" => 1, "y" => 2 }
+GET /points/x=1,y=2        # simple, explode:   point => { "x" => 1, "y" => 2 }
+GET /points/;x=1;y=2       # matrix, explode:   point => { "x" => 1, "y" => 2 }
+```
+
 ## Alternatives
 
 - [openapi_first](https://github.com/ahx/openapi_first)
@@ -283,7 +305,6 @@ GET /things/;id=1;id=2     # matrix, explode:   id => [1, 2]
 ## Feature plans
 
 - Full OpenAPI 3.1.0 support:
-  - object-valued path and form-encoded query parameters
   - xml
 - Callbacks and webhooks validations
 - Example validations

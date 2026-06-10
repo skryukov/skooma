@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning].
 
 ### Added
 
+- Support object-valued path parameters (`simple`, `label`, and `matrix` styles, explode-aware) and `form`-style object query parameters. Exploded form objects (`?x=1&y=2`) are gathered by matching the schema's `properties` names; non-exploded forms flatten under the parameter's name (`?point=x,1,y,2`). Properties are coerced to their declared types. ([@skryukov])
+
 - Support for external `$ref`s in OpenAPI documents. References like `$ref: './responses.yaml#/UsersResponse'` now resolve against the spec file's directory (or any source registered on the registry) and are wrapped with the appropriate OpenAPI object type — Response, Parameter, Header, RequestBody, PathItem, or a plain JSON Schema for `schema:` refs. Chained and self-recursive external refs are supported. ([@skryukov])
 - Support array-valued query parameters: respect the `style` and `explode` keywords (`form`, `spaceDelimited`, and `pipeDelimited` styles), coerce array items to the declared `items` type, and map the non-standard bracket convention (`ids[]=1&ids[]=2`) to array params. ([@dslh])
 - Support object-valued query parameters declared with the `deepObject` style (`filter[id]=1&filter[name]=foo`), coercing each property to its declared type. Parameter coercion now descends into array items (positional `prefixItems` first, then `items`) and object properties (`properties` first, then `additionalProperties`), while request/response bodies keep their JSON-native types.

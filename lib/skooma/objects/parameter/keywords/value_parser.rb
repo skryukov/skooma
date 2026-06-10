@@ -24,7 +24,7 @@ module Skooma
           }.freeze
 
           class << self
-            def call(instance, result, array: false)
+            def call(instance, result, schema: nil)
               location = result.sibling(instance, "in")&.annotation
               raise Error, "Missing `in` key #{result.path}" unless location
 
@@ -33,26 +33,35 @@ module Skooma
 
               case location
               when "query"
-                query_param_value(instance, result, key, array: array)
+                query_param_value(instance, result, key, schema: schema)
               when "header"
-                header_param_value(instance, result, key, array: array)
+                header_param_value(instance, result, key, schema: schema)
               when "path"
-                path_param_value(instance, result, key, array: array)
+                path_param_value(instance, result, key, schema: schema)
               when "cookie"
-                cookie_param_value(instance, result, key, array: array)
+                cookie_param_value(instance, result, key, schema: schema)
               else
                 raise Error, "Unknown location: #{location}"
               end
             end
 
-            def array_param?(parameter)
-              schema = parameter["schema"]
-              schema.is_a?(JSONSkooma::JSONSchema) && schema.type == "object" && schema["type"] == "array"
-            end
-
             private
 
-            def query_param_value(instance, result, key, array:)
+            # The declared shape of the parameter value: :array, :object, or
+            # :primitive (scalars, missing schemas, and `content` params).
+            def shape_of(schema)
+              return :primitive unless schema.is_a?(JSONSkooma::JSONSchema) && schema.type == "object"
+
+              case schema["type"]&.value
+              when "array" then :array
+              when "object" then :object
+              else :primitive
+              end
+            end
+
+            def query_param_value(instance, result, key, schema:)
+              shape = shape_of(schema)
+
               # `deepObject` spreads an object across bracketed keys
               # (`filter[a]=1&filter[b]=2`) and is the only style that consumes
               # more than one query key, so it is handled before the scalar/array
@@ -61,6 +70,11 @@ module Skooma
                 return deep_object_value(instance, key)
               end
 
+              if shape == :object
+                return form_object_value(instance, result, key, schema)
+              end
+
+              array = shape == :array
               params = parse_query(instance["query"]&.value)
               values = params[key]
               # Support the non-standard Rails/Rack/PHP bracket convention
@@ -81,10 +95,11 @@ module Skooma
 
             # Header values are a single string; an array is delimited inline
             # (`simple` style, comma-separated). `explode` does not change the
-            # serialization for headers, so it is not consulted.
-            def header_param_value(instance, result, key, array:)
+            # serialization for headers, so it is not consulted. Object-valued
+            # headers are out of scope.
+            def header_param_value(instance, result, key, schema:)
               attribute = instance["headers"][key]
-              return attribute unless array
+              return attribute unless shape_of(schema) == :array
               return attribute if attribute.nil? || attribute.value.nil?
 
               Instance::Attribute.new(
@@ -96,17 +111,22 @@ module Skooma
 
             # Path values are a single captured segment. `simple` (the default)
             # is comma-delimited; `label` carries a `.` prefix and `matrix` a
-            # `;name=` prefix, and for those two `explode` switches the item
-            # separator. Object-valued path params are out of scope.
-            def path_param_value(instance, result, key, array:)
+            # `;name=` prefix, and for arrays `explode` switches the item
+            # separator. Objects flatten into the segment as key/value pairs —
+            # comma-interleaved (`role,admin`) or `=`-joined (`role=admin`)
+            # when exploded.
+            def path_param_value(instance, result, key, schema:)
               raw = path_attributes(result)[key]
               return nil if raw.nil?
 
               style = style_for(result, instance, "path")
+              explode = result.sibling(instance, "explode")&.annotation || false
               value =
-                if array
-                  explode = result.sibling(instance, "explode")&.annotation || false
+                case shape_of(schema)
+                when :array
                   deserialize_path_array(raw, key, style, explode)
+                when :object
+                  deserialize_path_object(raw, key, style, explode)
                 else
                   strip_path_prefix(raw, key, style)
                 end
@@ -148,14 +168,39 @@ module Skooma
               end
             end
 
+            # Object path params flatten properties into the segment:
+            #   simple:          `role,admin,name,Alex`
+            #   simple explode:  `role=admin,name=Alex`
+            #   label:           `.role,admin,name,Alex`
+            #   label explode:   `.role=admin.name=Alex`
+            #   matrix:          `;point=role,admin,name,Alex`
+            #   matrix explode:  `;role=admin;name=Alex`
+            # A malformed flattening (odd member count, missing `=`) returns the
+            # raw string so schema validation rejects it.
+            def deserialize_path_object(raw, name, style, explode)
+              members =
+                if explode
+                  body = (style == "matrix") ? raw.delete_prefix(";") : strip_path_prefix(raw, name, style)
+                  separator = {"label" => ".", "matrix" => ";"}.fetch(style, ",")
+                  body.split(separator).map { |pair| pair.split("=", 2) }
+                else
+                  strip_path_prefix(raw, name, style).split(",").each_slice(2).to_a
+                end
+
+              return raw unless members.all? { |pair| pair.size == 2 }
+
+              members.to_h
+            end
+
             # Cookies carry one string per name; an array is a delimited inline
             # value (`form` style, comma-separated). `explode` is not consulted
-            # because cookies cannot repeat a name.
-            def cookie_param_value(instance, result, key, array:)
+            # because cookies cannot repeat a name. Object-valued cookies are
+            # out of scope.
+            def cookie_param_value(instance, result, key, schema:)
               raw = parse_cookies(instance["headers"]["Cookie"]&.value)[key]
               return nil if raw.nil?
 
-              value = array ? split_delimited(raw, style_for(result, instance, "cookie")) : raw
+              value = (shape_of(schema) == :array) ? split_delimited(raw, style_for(result, instance, "cookie")) : raw
               Instance::Attribute.new(value, key: key, parent: instance["headers"])
             end
 
@@ -177,6 +222,41 @@ module Skooma
               return nil if object.empty?
 
               Instance::Attribute.new(object, key: key, parent: instance["query"])
+            end
+
+            # `form`-style object query params (the default style). Exploded
+            # objects drop the parameter name entirely — each declared property
+            # becomes its own query key (`?x=1&y=2`) — so members are gathered
+            # by matching the schema's `properties` names; `additionalProperties`
+            # members cannot be recognized and are out of scope. Non-exploded
+            # objects flatten under the parameter's own name (`?point=x,1,y,2`).
+            def form_object_value(instance, result, key, schema)
+              params = parse_query(instance["query"]&.value)
+              explode = result.sibling(instance, "explode")&.annotation
+              explode = true if explode.nil?
+
+              if explode
+                properties = schema["properties"]
+                return nil unless properties.respond_to?(:each)
+
+                object = {}
+                properties.each do |property, _subschema|
+                  values = params[property]
+                  object[property] = values.last unless values.nil?
+                end
+                return nil if object.empty?
+
+                Instance::Attribute.new(object, key: key, parent: instance["query"])
+              else
+                values = params[key]
+                return nil if values.nil? || values.last.nil?
+
+                members = values.last.split(",").each_slice(2).to_a
+                # A malformed flattening (odd member count) stays a raw string
+                # so schema validation rejects it.
+                value = (members.all? { |pair| pair.size == 2 }) ? members.to_h : values.last
+                Instance::Attribute.new(value, key: key, parent: instance["query"])
+              end
             end
 
             def parse_query(query_string)
