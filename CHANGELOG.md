@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning].
 
 - Support for external `$ref`s in OpenAPI documents. References like `$ref: './responses.yaml#/UsersResponse'` now resolve against the spec file's directory (or any source registered on the registry) and are wrapped with the appropriate OpenAPI object type — Response, Parameter, Header, RequestBody, PathItem, or a plain JSON Schema for `schema:` refs. Chained and self-recursive external refs are supported. ([@skryukov])
 - Support array-valued query parameters: respect the `style` and `explode` keywords (`form`, `spaceDelimited`, and `pipeDelimited` styles), coerce array items to the declared `items` type, and map the non-standard bracket convention (`ids[]=1&ids[]=2`) to array params. ([@dslh])
+- Support object-valued query parameters declared with the `deepObject` style (`filter[id]=1&filter[name]=foo`), coercing each property to its declared type. Parameter coercion now descends into array items (positional `prefixItems` first, then `items`) and object properties (`properties` first, then `additionalProperties`), while request/response bodies keep their JSON-native types.
+- Support array-valued header (`simple` style) and cookie (`form` style) parameters, splitting the delimited value and coercing each item to the declared `items` type.
+- Support cookie parameters, which were previously ignored entirely.
+- Support array-valued path parameters across the `simple`, `label`, and `matrix` styles (with `explode`), coercing each item to the declared `items` type.
+- Parse `content`-typed parameters (e.g. `content: {application/json: …}`) using the parameter's own media type before validation, instead of validating the raw string against a media type taken from the response. **Behavior change:** such values are now decoded per their media type (e.g. JSON), so a value that previously passed as a raw string may need to be sent in its serialized form (e.g. `"100"` rather than `100` for a JSON string).
 
 ### Changed
 

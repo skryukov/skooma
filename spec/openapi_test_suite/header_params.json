@@ -108,7 +108,7 @@
             "headers": {
               "Content-Type": "application/json",
               "X-Expires-At": "2020-01-01T00:00:00Z",
-              "X-Rate-Limit": "100"
+              "X-Rate-Limit": "\"100\""
             }
           },
           "response": {
@@ -129,7 +129,7 @@
           "request": {
             "headers": {
               "Content-Type": "application/json",
-              "X-Rate-Limit": "100"
+              "X-Rate-Limit": "\"100\""
             }
           },
           "response": {
@@ -172,7 +172,7 @@
             "headers": {
               "Content-Type": "application/json",
               "X-Expires-At": "2020-01-01T00:00:00Z",
-              "X-Rate-Limit": "1"
+              "X-Rate-Limit": "\"1\""
             }
           },
           "response": {
@@ -194,7 +194,7 @@
             "headers": {
               "Content-Type": "application/json",
               "X-Expires-At": "Christmas",
-              "X-Rate-Limit": "100"
+              "X-Rate-Limit": "\"100\""
             }
           },
           "response": {

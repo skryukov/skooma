@@ -1,0 +1,181 @@
+[
+  {
+    "description": "Array-valued header parameters (simple style)",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {
+        "title": "api",
+        "version": "1.0.0"
+      },
+      "paths": {
+        "/": {
+          "get": {
+            "parameters": [
+              {
+                "in": "header",
+                "name": "X-Ids",
+                "required": true,
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  },
+                  "maxItems": 3
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Success",
+                "content": {
+                  "application/json": {
+                    "schema": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "a comma-separated header is split and coerced to the item type",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "headers": {"Content-Type": "application/json", "X-Ids": "1,2,3"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "a single value becomes a one-element array",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "headers": {"Content-Type": "application/json", "X-Ids": "1"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "too many items violates maxItems",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "headers": {"Content-Type": "application/json", "X-Ids": "1,2,3,4"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "an item that fails its type is invalid",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "headers": {"Content-Type": "application/json", "X-Ids": "1,x"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "a missing required array header is invalid",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "headers": {"Content-Type": "application/json"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": false
+      }
+    ]
+  },
+  {
+    "description": "Optional array-valued header parameters",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {
+        "title": "api",
+        "version": "1.0.0"
+      },
+      "paths": {
+        "/": {
+          "get": {
+            "parameters": [
+              {
+                "in": "header",
+                "name": "X-Ids",
+                "required": false,
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Success",
+                "content": {
+                  "application/json": {
+                    "schema": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "an absent optional array header is skipped",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "headers": {"Content-Type": "application/json"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": true
+      }
+    ]
+  }
+]
