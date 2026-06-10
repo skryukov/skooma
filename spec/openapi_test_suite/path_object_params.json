@@ -1,0 +1,239 @@
+[
+  {
+    "description": "object-valued path params deserialize simple style",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {"title": "api", "version": "1.0.0"},
+      "paths": {
+        "/points/{point}": {
+          "get": {
+            "parameters": [
+              {
+                "in": "path",
+                "name": "point",
+                "required": true,
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "x": {"type": "integer"},
+                    "y": {"type": "integer"}
+                  },
+                  "required": ["x", "y"]
+                }
+              }
+            ],
+            "responses": {"200": {"description": "ok"}}
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "comma-interleaved pairs build a coerced object",
+        "data": {
+          "method": "get",
+          "path": "/points/x,1,y,2",
+          "request": {
+            "query": "",
+            "headers": {"Content-Type": "application/json"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "a missing required property is invalid",
+        "data": {
+          "method": "get",
+          "path": "/points/x,1",
+          "request": {
+            "query": "",
+            "headers": {"Content-Type": "application/json"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "an odd member count is invalid",
+        "data": {
+          "method": "get",
+          "path": "/points/x,1,y",
+          "request": {
+            "query": "",
+            "headers": {"Content-Type": "application/json"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": false
+      }
+    ]
+  },
+  {
+    "description": "object-valued path params deserialize exploded simple style",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {"title": "api", "version": "1.0.0"},
+      "paths": {
+        "/points/{point}": {
+          "get": {
+            "parameters": [
+              {
+                "in": "path",
+                "name": "point",
+                "required": true,
+                "explode": true,
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "x": {"type": "integer"},
+                    "y": {"type": "integer"}
+                  },
+                  "required": ["x", "y"]
+                }
+              }
+            ],
+            "responses": {"200": {"description": "ok"}}
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "equals-joined pairs build a coerced object",
+        "data": {
+          "method": "get",
+          "path": "/points/x=1,y=2",
+          "request": {
+            "query": "",
+            "headers": {"Content-Type": "application/json"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "a non-integer property is invalid",
+        "data": {
+          "method": "get",
+          "path": "/points/x=a,y=2",
+          "request": {
+            "query": "",
+            "headers": {"Content-Type": "application/json"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": false
+      }
+    ]
+  },
+  {
+    "description": "object-valued path params deserialize label and matrix styles",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {"title": "api", "version": "1.0.0"},
+      "paths": {
+        "/labeled/{point}": {
+          "get": {
+            "parameters": [
+              {
+                "in": "path",
+                "name": "point",
+                "required": true,
+                "style": "label",
+                "explode": true,
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "x": {"type": "integer"},
+                    "y": {"type": "integer"}
+                  },
+                  "required": ["x", "y"]
+                }
+              }
+            ],
+            "responses": {"200": {"description": "ok"}}
+          }
+        },
+        "/matrixed/{point}": {
+          "get": {
+            "parameters": [
+              {
+                "in": "path",
+                "name": "point",
+                "required": true,
+                "style": "matrix",
+                "explode": true,
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "x": {"type": "integer"},
+                    "y": {"type": "integer"}
+                  },
+                  "required": ["x", "y"]
+                }
+              }
+            ],
+            "responses": {"200": {"description": "ok"}}
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "exploded label pairs build a coerced object",
+        "data": {
+          "method": "get",
+          "path": "/labeled/.x=1.y=2",
+          "request": {
+            "query": "",
+            "headers": {"Content-Type": "application/json"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "exploded matrix pairs build a coerced object",
+        "data": {
+          "method": "get",
+          "path": "/matrixed/;x=1;y=2",
+          "request": {
+            "query": "",
+            "headers": {"Content-Type": "application/json"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": true
+      }
+    ]
+  }
+]

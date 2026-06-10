@@ -11,7 +11,7 @@ module Skooma
           def evaluate(instance, result)
             return unless json.value
 
-            value = ValueParser.call(instance, result, array: ValueParser.array_param?(parent_schema))
+            value = ValueParser.call(instance, result, schema: parent_schema["schema"])
             if value&.value.nil?
               result.failure("Parameter is required")
             end

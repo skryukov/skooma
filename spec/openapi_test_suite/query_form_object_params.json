@@ -1,0 +1,167 @@
+[
+  {
+    "description": "exploded form object query params gather declared properties",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {"title": "api", "version": "1.0.0"},
+      "paths": {
+        "/": {
+          "get": {
+            "parameters": [
+              {
+                "in": "query",
+                "name": "point",
+                "required": true,
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "x": {"type": "integer"},
+                    "y": {"type": "integer"}
+                  },
+                  "required": ["x", "y"]
+                }
+              }
+            ],
+            "responses": {"200": {"description": "ok"}}
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "properties become top-level query keys and are coerced",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "x=1&y=2",
+            "headers": {"Content-Type": "application/json"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "a missing required property is invalid",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "x=1",
+            "headers": {"Content-Type": "application/json"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "no matching properties means the required param is absent",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "unrelated=1",
+            "headers": {"Content-Type": "application/json"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": false
+      }
+    ]
+  },
+  {
+    "description": "non-exploded form object query params flatten under their own name",
+    "schema": {
+      "openapi": "3.1.0",
+      "info": {"title": "api", "version": "1.0.0"},
+      "paths": {
+        "/": {
+          "get": {
+            "parameters": [
+              {
+                "in": "query",
+                "name": "point",
+                "required": true,
+                "explode": false,
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "x": {"type": "integer"},
+                    "y": {"type": "integer"}
+                  },
+                  "required": ["x", "y"]
+                }
+              }
+            ],
+            "responses": {"200": {"description": "ok"}}
+          }
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "comma-interleaved members build a coerced object",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "point=x,1,y,2",
+            "headers": {"Content-Type": "application/json"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "an odd member count is invalid",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "point=x,1,y",
+            "headers": {"Content-Type": "application/json"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "a non-integer member is invalid",
+        "data": {
+          "method": "get",
+          "path": "/",
+          "request": {
+            "query": "point=x,a,y,2",
+            "headers": {"Content-Type": "application/json"}
+          },
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": null
+          }
+        },
+        "valid": false
+      }
+    ]
+  }
+]
