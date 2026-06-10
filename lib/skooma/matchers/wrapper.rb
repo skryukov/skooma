@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "digest"
 require "pathname"
 
 module Skooma
@@ -44,7 +45,7 @@ module Skooma
         end
       end
 
-      def initialize(helper_methods_module, openapi_path, base_uri: "https://skoomarb.dev/", path_prefix: "", enforce_access_modes: false, use_patterns_for_path_matching: false, **params)
+      def initialize(helper_methods_module, openapi_path, base_uri: "https://skoomarb.dev/", path_prefix: "", enforce_access_modes: false, use_patterns_for_path_matching: false, coverage_store: nil, **params)
         super()
 
         registry = create_test_registry
@@ -59,7 +60,10 @@ module Skooma
         @schema.path_prefix = path_prefix
         @schema.enforce_access_modes = enforce_access_modes
 
-        storage = Skooma::CoverageStore.new(
+        # Any object implementing CoverageStore's interface (load_data,
+        # save_data, clear) can be passed via `coverage_store:` — e.g. to
+        # write one file per parallel CI runner and merge afterwards.
+        storage = coverage_store || Skooma::CoverageStore.new(
           file_path: File.join(Dir.pwd, "tmp", "skooma_coverage_#{Digest::SHA256.hexdigest(source_uri)[0..8]}.json")
         )
         @coverage = Coverage.new(@schema, mode: params[:coverage], format: params[:coverage_format], storage: storage)
