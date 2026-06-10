@@ -1,0 +1,14 @@
+openapi: 3.1.0
+info:
+  title: Recursive external schema
+  version: "1.0"
+paths:
+  /tree:
+    get:
+      responses:
+        '200':
+          description: A tree
+          content:
+            application/json:
+              schema:
+                $ref: './schemas.yaml#/TreeNode'

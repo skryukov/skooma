@@ -1,0 +1,7 @@
+openapi: 3.1.0
+info:
+  title: External PathItem refs
+  version: "1.0"
+paths:
+  /health:
+    $ref: './paths.yaml#/Health'

@@ -176,6 +176,34 @@ class ItemsTest < ActionDispatch::IntegrationTest
 end
 ```
 
+### Splitting specs across files
+
+Skooma resolves external `$ref`s relative to the OpenAPI document's directory, so you can split a large spec into multiple files:
+
+```yaml
+# docs/openapi.yaml
+paths:
+  /users:
+    get:
+      responses:
+        '200':
+          $ref: './responses.yaml#/UsersResponse'
+  /health:
+    $ref: './paths.yaml#/Health'
+```
+
+References are wrapped with the appropriate OpenAPI object type based on context — `$ref` inside `responses` loads as a Response, inside `parameters` as a Parameter, inside `schema` as a JSON Schema, and so on. Chained (A → B → C) and self-recursive schemas work out of the box.
+
+Only local files are resolved by default. To load refs from other sources (e.g. HTTP), register a source on the registry:
+
+```ruby
+schema = Skooma::Minitest[path_to_openapi].schema
+schema.registry.add_source(
+  "https://example.com/schemas/",
+  JSONSkooma::Sources::Remote.new("https://example.com/schemas/")
+)
+```
+
 ## Alternatives
 
 - [openapi_first](https://github.com/ahx/openapi_first)
@@ -183,7 +211,6 @@ end
 
 ## Feature plans
 
-- Full support for external `$ref`s
 - Full OpenAPI 3.1.0 support:
   - respect `style` and `explode` keywords
   - xml

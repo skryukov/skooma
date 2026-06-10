@@ -1,0 +1,8 @@
+UsersResponse:
+  description: A list of users
+  content:
+    application/json:
+      schema:
+        type: array
+        items:
+          $ref: './schemas.yaml#/User'

@@ -3,6 +3,8 @@
 module Skooma
   module Objects
     class Base < JSONSkooma::JSONSchema
+      include ExternalRefs
+
       DEFAULT_OPTIONS = {
         registry: REGISTRY_NAME
       }.freeze

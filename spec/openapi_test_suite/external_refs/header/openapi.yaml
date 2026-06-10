@@ -1,0 +1,17 @@
+openapi: 3.1.0
+info:
+  title: External Header refs
+  version: "1.0"
+paths:
+  /ping:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-Id:
+              $ref: './headers.yaml#/RequestId'
+          content:
+            application/json:
+              schema:
+                type: object

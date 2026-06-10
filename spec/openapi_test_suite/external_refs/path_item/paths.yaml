@@ -1,0 +1,15 @@
+Health:
+  get:
+    responses:
+      '200':
+        description: Service is up
+        content:
+          application/json:
+            schema:
+              type: object
+              unevaluatedProperties: false
+              required: [status]
+              properties:
+                status:
+                  type: string
+                  enum: [ok]

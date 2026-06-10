@@ -1,0 +1,11 @@
+TreeNode:
+  type: object
+  unevaluatedProperties: false
+  required: [name]
+  properties:
+    name:
+      type: string
+    children:
+      type: array
+      items:
+        $ref: './schemas.yaml#/TreeNode'

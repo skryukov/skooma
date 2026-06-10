@@ -1,0 +1,68 @@
+[
+  {
+    "description": "external $ref to a Response (chained via schemas)",
+    "tests": [
+      {
+        "description": "GET /users with valid list",
+        "data": {
+          "method": "get",
+          "path": "/users",
+          "request": {"headers": {"Content-Type": "application/json"}},
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": "[{\"id\": 1, \"name\": \"Alice\"}]"
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "GET /users with user missing name is invalid",
+        "data": {
+          "method": "get",
+          "path": "/users",
+          "request": {"headers": {"Content-Type": "application/json"}},
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": "[{\"id\": 1}]"
+          }
+        },
+        "valid": false
+      }
+    ]
+  },
+  {
+    "description": "external $ref to a Parameter and a Schema",
+    "tests": [
+      {
+        "description": "GET /users/{id} with valid body",
+        "data": {
+          "method": "get",
+          "path": "/users/42",
+          "request": {"headers": {"Content-Type": "application/json"}},
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": "{\"id\": 42, \"name\": \"Alice\"}"
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "GET /users/{id} with wrong-typed id",
+        "data": {
+          "method": "get",
+          "path": "/users/not-a-number",
+          "request": {"headers": {"Content-Type": "application/json"}},
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": "{\"id\": 42, \"name\": \"Alice\"}"
+          }
+        },
+        "valid": false
+      }
+    ]
+  }
+]

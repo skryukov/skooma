@@ -17,7 +17,7 @@ module Skooma
         private
 
         def wrap_value(value)
-          JSONSkooma::JSONSchema.new(
+          Objects::Schema.new(
             value,
             key: key,
             parent: parent_schema,

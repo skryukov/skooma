@@ -22,6 +22,7 @@ module Skooma
 
   JSONSkooma.register_dialect("oas-3.1", Dialects::OAS31)
   JSONSkooma::Formatters.register :skooma, OutputFormat
+  JSONSkooma::Keywords::ValueSchemas.default_schema_class = Objects::Schema
 
   class << self
     def create_registry(name: REGISTRY_NAME)

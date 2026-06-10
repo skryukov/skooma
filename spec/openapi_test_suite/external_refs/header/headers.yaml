@@ -1,0 +1,6 @@
+RequestId:
+  description: Unique request identifier.
+  required: true
+  schema:
+    type: string
+    pattern: "^[0-9a-f-]+$"
