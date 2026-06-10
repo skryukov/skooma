@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rack/utils"
+
 module Skooma
   module Matchers
     class ConformResponseSchema < ConformRequestSchema
@@ -37,7 +39,7 @@ module Skooma
       private
 
       def status_matches?
-        @mapped_response["response"]["status"] == @expected
+        @mapped_response["response"]["status"] == @expected_code
       end
     end
   end
