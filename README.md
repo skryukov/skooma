@@ -58,7 +58,9 @@ RSpec.configure do |config|
 
   # To control where coverage data is stored (e.g. one file per parallel CI runner),
   # pass a custom store via `coverage_store:` — any object implementing
-  # `load_data`, `save_data(defined, covered)`, and `clear` works:
+  # `load_data`, `save_data(defined, covered)`, and `clear` works.
+  # Treat the path entries as opaque values: their shape may gain dimensions
+  # (e.g. content type) in future versions.
   store = Skooma::CoverageStore.new(file_path: "tmp/skooma_coverage_#{ENV["TEST_ENV_NUMBER"]}.json")
   config.include Skooma::RSpec[path_to_openapi, coverage: :report, coverage_store: store], type: :request
 end
@@ -323,6 +325,23 @@ requestBody:
         properties:
           id: {type: string}
           file: {type: string, format: binary}
+```
+
+The Media Type Object's `encoding` field is respected: a multipart or
+urlencoded field whose `contentType` is a JSON media type is decoded before
+validation, so its schema validates the structured value. For multipart
+bodies, object-typed properties default to JSON decoding per the spec:
+
+```yaml
+content:
+  multipart/form-data:
+    schema:
+      type: object
+      properties:
+        meta: {type: object}          # decoded as JSON (spec default)
+        file: {type: string, format: binary}
+    encoding:
+      meta: {contentType: application/json}
 ```
 
 Custom parsers for other media types can be registered via
