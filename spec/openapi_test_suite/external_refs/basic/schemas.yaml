@@ -1,0 +1,9 @@
+User:
+  type: object
+  unevaluatedProperties: false
+  properties:
+    id:
+      type: integer
+    name:
+      type: string
+  required: [id, name]

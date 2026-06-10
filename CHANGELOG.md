@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
+### Added
+
+- Support for external `$ref`s in OpenAPI documents. References like `$ref: './responses.yaml#/UsersResponse'` now resolve against the spec file's directory (or any source registered on the registry) and are wrapped with the appropriate OpenAPI object type — Response, Parameter, Header, RequestBody, PathItem, or a plain JSON Schema for `schema:` refs. Chained and self-recursive external refs are supported. ([@skryukov])
+
+### Changed
+
+- Bumped minimum `json_skooma` to `~> 0.2.7` for the new typed `UnexpectedSchemaClassError` and public `Registry#load_json` (0.2.6 was yanked due to a packaging issue). ([@skryukov])
+
 ## [0.3.8] - 2026-04-16
 
 ### Fixed

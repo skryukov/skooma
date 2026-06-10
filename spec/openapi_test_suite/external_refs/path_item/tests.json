@@ -1,0 +1,35 @@
+[
+  {
+    "description": "external $ref to a PathItem",
+    "tests": [
+      {
+        "description": "valid response passes",
+        "data": {
+          "method": "get",
+          "path": "/health",
+          "request": {"headers": {"Content-Type": "application/json"}},
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": "{\"status\": \"ok\"}"
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "status not in enum fails",
+        "data": {
+          "method": "get",
+          "path": "/health",
+          "request": {"headers": {"Content-Type": "application/json"}},
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": "{\"status\": \"broken\"}"
+          }
+        },
+        "valid": false
+      }
+    ]
+  }
+]

@@ -1,0 +1,33 @@
+[
+  {
+    "description": "external $ref to a RequestBody",
+    "tests": [
+      {
+        "description": "valid body passes",
+        "data": {
+          "method": "post",
+          "path": "/users",
+          "request": {
+            "headers": {"Content-Type": "application/json"},
+            "body": "{\"name\": \"Alice\"}"
+          },
+          "response": {"status": 201, "headers": {}, "body": ""}
+        },
+        "valid": true
+      },
+      {
+        "description": "body missing required name fails",
+        "data": {
+          "method": "post",
+          "path": "/users",
+          "request": {
+            "headers": {"Content-Type": "application/json"},
+            "body": "{}"
+          },
+          "response": {"status": 201, "headers": {}, "body": ""}
+        },
+        "valid": false
+      }
+    ]
+  }
+]

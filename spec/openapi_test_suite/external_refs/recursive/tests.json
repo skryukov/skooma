@@ -1,0 +1,49 @@
+[
+  {
+    "description": "self-referential external schema",
+    "tests": [
+      {
+        "description": "valid leaf node",
+        "data": {
+          "method": "get",
+          "path": "/tree",
+          "request": {"headers": {"Content-Type": "application/json"}},
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": "{\"name\": \"root\", \"children\": []}"
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "valid nested tree three levels deep",
+        "data": {
+          "method": "get",
+          "path": "/tree",
+          "request": {"headers": {"Content-Type": "application/json"}},
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": "{\"name\": \"a\", \"children\": [{\"name\": \"b\", \"children\": [{\"name\": \"c\"}]}]}"
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "invalid deeply nested child missing required name",
+        "data": {
+          "method": "get",
+          "path": "/tree",
+          "request": {"headers": {"Content-Type": "application/json"}},
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": "{\"name\": \"a\", \"children\": [{\"name\": \"b\", \"children\": [{}]}]}"
+          }
+        },
+        "valid": false
+      }
+    ]
+  }
+]

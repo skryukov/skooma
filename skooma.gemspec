@@ -28,5 +28,5 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency "rack", ">= 2.0"
   spec.add_runtime_dependency "zeitwerk", "~> 2.6"
-  spec.add_runtime_dependency "json_skooma", "~> 0.2.5"
+  spec.add_runtime_dependency "json_skooma", "~> 0.2.7"
 end

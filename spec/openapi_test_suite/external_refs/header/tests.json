@@ -1,0 +1,35 @@
+[
+  {
+    "description": "external $ref to a Header",
+    "tests": [
+      {
+        "description": "valid X-Request-Id header passes",
+        "data": {
+          "method": "get",
+          "path": "/ping",
+          "request": {"headers": {"Content-Type": "application/json"}},
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json", "X-Request-Id": "abc-123-def"},
+            "body": "{}"
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "missing required X-Request-Id header fails",
+        "data": {
+          "method": "get",
+          "path": "/ping",
+          "request": {"headers": {"Content-Type": "application/json"}},
+          "response": {
+            "status": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": "{}"
+          }
+        },
+        "valid": false
+      }
+    ]
+  }
+]
