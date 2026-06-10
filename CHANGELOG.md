@@ -7,20 +7,21 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-06-10
+
 ### Added
 
 - Parse `multipart/form-data` and `application/x-www-form-urlencoded` request bodies before validation. File parts are read as binary strings, so uploads validate against `type: string` / `format: binary` schemas. Fixes file upload validation failing with errors like "body id required". ([@skryukov])
 - Respect the Media Type Object's `encoding` field for form bodies: fields with a JSON `contentType` are decoded before validation (multipart object-typed properties default to JSON per the spec). ([@skryukov])
 - Allow passing a custom coverage store to the RSpec/Minitest helpers via `coverage_store:` — any object implementing `load_data`, `save_data`, and `clear`. Useful for writing one coverage file per parallel CI runner and merging afterwards. ([@skryukov])
 - Support object-valued path parameters (`simple`, `label`, and `matrix` styles, explode-aware) and `form`-style object query parameters. Exploded form objects (`?x=1&y=2`) are gathered by matching the schema's `properties` names; non-exploded forms flatten under the parameter's name (`?point=x,1,y,2`). Properties are coerced to their declared types. ([@skryukov])
-
 - Support for external `$ref`s in OpenAPI documents. References like `$ref: './responses.yaml#/UsersResponse'` now resolve against the spec file's directory (or any source registered on the registry) and are wrapped with the appropriate OpenAPI object type — Response, Parameter, Header, RequestBody, PathItem, or a plain JSON Schema for `schema:` refs. Chained and self-recursive external refs are supported. ([@skryukov])
 - Support array-valued query parameters: respect the `style` and `explode` keywords (`form`, `spaceDelimited`, and `pipeDelimited` styles), coerce array items to the declared `items` type, and map the non-standard bracket convention (`ids[]=1&ids[]=2`) to array params. ([@dslh])
-- Support object-valued query parameters declared with the `deepObject` style (`filter[id]=1&filter[name]=foo`), coercing each property to its declared type. Parameter coercion now descends into array items (positional `prefixItems` first, then `items`) and object properties (`properties` first, then `additionalProperties`), while request/response bodies keep their JSON-native types.
-- Support array-valued header (`simple` style) and cookie (`form` style) parameters, splitting the delimited value and coercing each item to the declared `items` type.
-- Support cookie parameters, which were previously ignored entirely.
-- Support array-valued path parameters across the `simple`, `label`, and `matrix` styles (with `explode`), coercing each item to the declared `items` type.
-- Parse `content`-typed parameters (e.g. `content: {application/json: …}`) using the parameter's own media type before validation, instead of validating the raw string against a media type taken from the response. **Behavior change:** such values are now decoded per their media type (e.g. JSON), so a value that previously passed as a raw string may need to be sent in its serialized form (e.g. `"100"` rather than `100` for a JSON string).
+- Support object-valued query parameters declared with the `deepObject` style (`filter[id]=1&filter[name]=foo`), coercing each property to its declared type. Parameter coercion now descends into array items (positional `prefixItems` first, then `items`) and object properties (`properties` first, then `additionalProperties`), while request/response bodies keep their JSON-native types. ([@skryukov])
+- Support array-valued header (`simple` style) and cookie (`form` style) parameters, splitting the delimited value and coercing each item to the declared `items` type. ([@skryukov])
+- Support cookie parameters, which were previously ignored entirely. ([@skryukov])
+- Support array-valued path parameters across the `simple`, `label`, and `matrix` styles (with `explode`), coercing each item to the declared `items` type. ([@skryukov])
+- Parse `content`-typed parameters (e.g. `content: {application/json: …}`) using the parameter's own media type before validation, instead of validating the raw string against a media type taken from the response. **Behavior change:** such values are now decoded per their media type (e.g. JSON), so a value that previously passed as a raw string may need to be sent in its serialized form (e.g. `"100"` rather than `100` for a JSON string). ([@skryukov])
 
 ### Changed
 
@@ -212,7 +213,8 @@ and this project adheres to [Semantic Versioning].
 [@ursm]: https://github.com/ursm
 [@visini]: https://github.com/visini
 
-[Unreleased]: https://github.com/skryukov/skooma/compare/v0.3.8...HEAD
+[Unreleased]: https://github.com/skryukov/skooma/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/skryukov/skooma/compare/v0.3.8...v0.4.0
 [0.3.8]: https://github.com/skryukov/skooma/compare/v0.3.7...v0.3.8
 [0.3.7]: https://github.com/skryukov/skooma/compare/v0.3.6...v0.3.7
 [0.3.6]: https://github.com/skryukov/skooma/compare/v0.3.5...v0.3.6
