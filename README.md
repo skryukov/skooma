@@ -55,6 +55,12 @@ RSpec.configure do |config|
   # To enable coverage, pass `coverage: :report` option,
   # and to raise an error when an operation is not covered, pass `coverage: :strict` option:
   config.include Skooma::RSpec[path_to_openapi, coverage: :report], type: :request
+
+  # To control where coverage data is stored (e.g. one file per parallel CI runner),
+  # pass a custom store via `coverage_store:` — any object implementing
+  # `load_data`, `save_data(defined, covered)`, and `clear` works:
+  store = Skooma::CoverageStore.new(file_path: "tmp/skooma_coverage_#{ENV["TEST_ENV_NUMBER"]}.json")
+  config.include Skooma::RSpec[path_to_openapi, coverage: :report, coverage_store: store], type: :request
 end
 ```
 
@@ -128,6 +134,10 @@ ActionDispatch::IntegrationTest.include Skooma::Minitest[path_to_openapi, path_p
 # To enable coverage, pass `coverage: :report` option,
 # and to raise an error when an operation is not covered, pass `coverage: :strict` option:
 ActionDispatch::IntegrationTest.include Skooma::Minitest[path_to_openapi, coverage: :report], type: :request
+
+# To control where coverage data is stored, pass a custom store via `coverage_store:`:
+store = Skooma::CoverageStore.new(file_path: "tmp/skooma_coverage_#{ENV["TEST_ENV_NUMBER"]}.json")
+ActionDispatch::IntegrationTest.include Skooma::Minitest[path_to_openapi, coverage: :report, coverage_store: store], type: :request
 
 # EXPERIMENTAL
 # To enable support for readOnly and writeOnly keywords, pass `enforce_access_modes: true` option:

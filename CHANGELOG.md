@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning].
 
 ### Added
 
+- Allow passing a custom coverage store to the RSpec/Minitest helpers via `coverage_store:` — any object implementing `load_data`, `save_data`, and `clear`. Useful for writing one coverage file per parallel CI runner and merging afterwards. ([@skryukov])
 - Support object-valued path parameters (`simple`, `label`, and `matrix` styles, explode-aware) and `form`-style object query parameters. Exploded form objects (`?x=1&y=2`) are gathered by matching the schema's `properties` names; non-exploded forms flatten under the parameter's name (`?point=x,1,y,2`). Properties are coerced to their declared types. ([@skryukov])
 
 - Support for external `$ref`s in OpenAPI documents. References like `$ref: './responses.yaml#/UsersResponse'` now resolve against the spec file's directory (or any source registered on the registry) and are wrapped with the appropriate OpenAPI object type — Response, Parameter, Header, RequestBody, PathItem, or a plain JSON Schema for `schema:` refs. Chained and self-recursive external refs are supported. ([@skryukov])
